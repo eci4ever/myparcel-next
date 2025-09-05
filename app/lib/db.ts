@@ -9,7 +9,7 @@ try {
 } catch (error) {
   console.error("Connection without SSL failed, retrying with SSL...");
   // Fallback to SSL connection
-  sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+  sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 }
 
 export default sql;

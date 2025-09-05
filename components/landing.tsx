@@ -3,27 +3,47 @@
  * @see https://v0.app/t/vYqEuvYrA6J
  * Documentation: https://v0.app/docs#integrating-generated-code-into-your-nextjs-app
  */
-import Link from "next/link"
+import Link from "next/link";
 
 export default function Landing() {
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <header className="px-4 lg:px-6 h-14 flex items-center bg-gray-100">
-        <Link href="#" className="flex items-center justify-center" prefetch={false}>
+        <Link
+          href="#"
+          className="flex items-center justify-center"
+          prefetch={false}
+        >
           <MountainIcon className="h-6 w-6" />
           <span className="sr-only">Acme Inc</span>
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link href="#" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+          <Link
+            href="#"
+            className="text-sm font-medium hover:underline underline-offset-4"
+            prefetch={false}
+          >
             Features
           </Link>
-          <Link href="#" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+          <Link
+            href="#"
+            className="text-sm font-medium hover:underline underline-offset-4"
+            prefetch={false}
+          >
             Pricing
           </Link>
-          <Link href="/dashboard" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+          <Link
+            href="/dashboard"
+            className="text-sm font-medium hover:underline underline-offset-4"
+            prefetch={false}
+          >
             Dashboard
           </Link>
-          <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
+          <Link
+            href="/login"
+            className="text-sm font-medium hover:underline underline-offset-4"
+            prefetch={false}
+          >
             Login
           </Link>
         </nav>
@@ -38,8 +58,9 @@ export default function Landing() {
                     The complete platform for building the Web
                   </h1>
                   <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
-                    Give your team the toolkit to stop configuring and start innovating. Securely build, deploy, and
-                    scale the best web experiences.
+                    Give your team the toolkit to stop configuring and start
+                    innovating. Securely build, deploy, and scale the best web
+                    experiences.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -69,33 +90,46 @@ export default function Landing() {
                 <div className="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-gray-800">
                   New Features
                 </div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Faster iteration. More innovation.</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Faster iteration. More innovation.
+                </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  The platform for rapid progress. Let your team focus on shipping features instead of managing
-                  infrastructure with automated CI/CD, built-in testing, and integrated collaboration.
+                  The platform for rapid progress. Let your team focus on
+                  shipping features instead of managing infrastructure with
+                  automated CI/CD, built-in testing, and integrated
+                  collaboration.
                 </p>
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
               <div className="grid gap-1">
                 <InfinityIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
-                <h3 className="text-lg font-bold">Infinite scalability, zero config</h3>
+                <h3 className="text-lg font-bold">
+                  Infinite scalability, zero config
+                </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Enable code to run on-demand without needing to manage your own infrastructure or upgrade hardware.
+                  Enable code to run on-demand without needing to manage your
+                  own infrastructure or upgrade hardware.
                 </p>
               </div>
               <div className="grid gap-1">
                 <InfoIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
-                <h3 className="text-lg font-bold">Real-time insights and controls</h3>
+                <h3 className="text-lg font-bold">
+                  Real-time insights and controls
+                </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Get granular, first-party, real-user metrics on site performance per deployment.
+                  Get granular, first-party, real-user metrics on site
+                  performance per deployment.
                 </p>
               </div>
               <div className="grid gap-1">
                 <UserPlusIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
-                <h3 className="text-lg font-bold">Personalization at the edge</h3>
+                <h3 className="text-lg font-bold">
+                  Personalization at the edge
+                </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Deliver dynamic, personalized content, while ensuring users only see the best version of your site.
+                  Deliver dynamic, personalized content, while ensuring users
+                  only see the best version of your site.
                 </p>
               </div>
             </div>
@@ -108,7 +142,8 @@ export default function Landing() {
                 Experience the workflow the best frontend teams love.
               </h2>
               <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                Let your team focus on shipping features instead of managing infrastructure with automated CI/CD.
+                Let your team focus on shipping features instead of managing
+                infrastructure with automated CI/CD.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row lg:justify-end">
@@ -124,18 +159,28 @@ export default function Landing() {
         </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-gray-500 dark:text-gray-400">&copy; 2024 Acme Inc. All rights reserved.</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          &copy; 2024 Acme Inc. All rights reserved.
+        </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
+          <Link
+            href="#"
+            className="text-xs hover:underline underline-offset-4"
+            prefetch={false}
+          >
             Terms of Service
           </Link>
-          <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
+          <Link
+            href="#"
+            className="text-xs hover:underline underline-offset-4"
+            prefetch={false}
+          >
             Privacy
           </Link>
         </nav>
       </footer>
     </div>
-  )
+  );
 }
 
 function InfinityIcon(props: any) {
@@ -154,9 +199,8 @@ function InfinityIcon(props: any) {
     >
       <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z" />
     </svg>
-  )
+  );
 }
-
 
 function InfoIcon(props: any) {
   return (
@@ -176,9 +220,8 @@ function InfoIcon(props: any) {
       <path d="M12 16v-4" />
       <path d="M12 8h.01" />
     </svg>
-  )
+  );
 }
-
 
 function MountainIcon(props: any) {
   return (
@@ -196,9 +239,8 @@ function MountainIcon(props: any) {
     >
       <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
     </svg>
-  )
+  );
 }
-
 
 function UserPlusIcon(props: any) {
   return (
@@ -219,5 +261,5 @@ function UserPlusIcon(props: any) {
       <line x1="19" x2="19" y1="8" y2="14" />
       <line x1="22" x2="16" y1="11" y2="11" />
     </svg>
-  )
+  );
 }

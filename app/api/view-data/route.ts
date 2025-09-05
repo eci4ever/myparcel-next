@@ -14,7 +14,10 @@ export async function GET() {
     // Fetch customers after seeding
     const customers = await getCustomers();
 
-    return Response.json({ message: "Get customers successfully ✅", customers });
+    return Response.json({
+      message: "Get customers successfully ✅",
+      customers,
+    });
   } catch (error: any) {
     console.error(error);
     return Response.json({ error: error.message }, { status: 500 });
