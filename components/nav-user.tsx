@@ -1,6 +1,5 @@
 "use client";
 
-import { SignOutButton } from "./ui/signout";
 import { logout } from "@/app/lib/actions";
 
 import {
@@ -27,6 +26,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useTransition } from "react";
+import { is } from "zod/v4/locales";
 
 export function NavUser({
   user,
@@ -38,7 +39,7 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
-
+  const [isPending, startTransition] = useTransition();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -97,9 +98,12 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+            onClick={() => startTransition(() => logout())}
+            disabled={isPending}
+            >
               <IconLogout />
-              <SignOutButton action={logout} />
+              <span>{isPending ? "Logging Out..." : "Logout"}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
