@@ -42,17 +42,17 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
+      title: "Invoices",
+      url: "/dashboard/invoices",
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
-      url: "#",
+      title: "Customers",
+      url: "/dashboard/customers",
       icon: IconChartBar,
     },
     {
