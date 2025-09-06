@@ -99,8 +99,8 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-            onClick={() => startTransition(() => logout())}
-            disabled={isPending}
+              onClick={() => startTransition(() => logout())}
+              disabled={isPending}
             >
               <IconLogout />
               <span>{isPending ? "Logging Out..." : "Logout"}</span>

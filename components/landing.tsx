@@ -4,6 +4,7 @@
  * Documentation: https://v0.app/docs#integrating-generated-code-into-your-nextjs-app
  */
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Landing() {
   return (
@@ -55,12 +56,11 @@ export default function Landing() {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    The complete platform for building the Web
+                    The complete solution for delivering your Parcels
                   </h1>
                   <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
-                    Give your team the toolkit to stop configuring and start
-                    innovating. Securely build, deploy, and scale the best web
-                    experiences.
+                    My Parcel System is a comprehensive platform designed to
+                    streamline the process of managing and delivering parcels.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -73,8 +73,8 @@ export default function Landing() {
                   </Link>
                 </div>
               </div>
-              <img
-                src="/placeholder.svg"
+              <Image
+                src="/placeholder.png"
                 width="550"
                 height="550"
                 alt="Hero"
@@ -94,10 +94,8 @@ export default function Landing() {
                   Faster iteration. More innovation.
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  The platform for rapid progress. Let your team focus on
-                  shipping features instead of managing infrastructure with
-                  automated CI/CD, built-in testing, and integrated
-                  collaboration.
+                  With a focus on innovation and scalability, the system ensures
+                  secure, reliable, and fast delivery experiences for customers.
                 </p>
               </div>
             </div>
@@ -105,31 +103,27 @@ export default function Landing() {
               <div className="grid gap-1">
                 <InfinityIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
                 <h3 className="text-lg font-bold">
-                  Infinite scalability, zero config
+                  Automated Parcel Management
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Enable code to run on-demand without needing to manage your
-                  own infrastructure or upgrade hardware.
+                  Simplify the process of creating, organizing, and managing
+                  shipments
                 </p>
               </div>
               <div className="grid gap-1">
                 <InfoIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
-                <h3 className="text-lg font-bold">
-                  Real-time insights and controls
-                </h3>
+                <h3 className="text-lg font-bold">Real-Time Tracking</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Get granular, first-party, real-user metrics on site
-                  performance per deployment.
+                  Keep customers informed with live updates on parcel locations
+                  and delivery statuses.
                 </p>
               </div>
               <div className="grid gap-1">
                 <UserPlusIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
-                <h3 className="text-lg font-bold">
-                  Personalization at the edge
-                </h3>
+                <h3 className="text-lg font-bold">Secure and Reliable</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Deliver dynamic, personalized content, while ensuring users
-                  only see the best version of your site.
+                  Ensure the safety of customer data and the reliability of
+                  deliveries.
                 </p>
               </div>
             </div>
@@ -142,8 +136,9 @@ export default function Landing() {
                 Experience the workflow the best frontend teams love.
               </h2>
               <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                Let your team focus on shipping features instead of managing
-                infrastructure with automated CI/CD.
+                It provides businesses and individuals with the tools they need
+                to efficiently handle shipping, tracking, and delivery
+                operations.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row lg:justify-end">
@@ -160,7 +155,7 @@ export default function Landing() {
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          &copy; 2024 Acme Inc. All rights reserved.
+          &copy; 2025 Eci Inc. All rights reserved.
         </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link

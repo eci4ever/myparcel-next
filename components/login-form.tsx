@@ -26,73 +26,75 @@ export function LoginForm({
   );
 
   return (
-      <div className={cn("flex flex-col gap-6", className)} {...props}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Login to your account</CardTitle>
-            <CardDescription>
-              Enter your email below to login to your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form action={formAction}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    placeholder="m@example.com"
-                    required
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
-                      className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
-                  </div>
-                  <Input id="password" name="password" type="password" required />
-                </div>
-                <div className="flex flex-col gap-3">
-                  <input type="hidden" name="redirectTo" value={callbackUrl} />
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    aria-disabled={isPending}
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Card>
+        <CardHeader>
+          <CardTitle>Login to your account</CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={formAction}>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-3">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="m@example.com"
+                  required
+                />
+              </div>
+              <div className="grid gap-3">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Password</Label>
+                  <a
+                    href="#"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
-                    Login
-                  </Button>
-                  <div
-                    className="flex h-8 items-end space-x-1"
-                    aria-live="polite"
-                    aria-atomic="true"
-                  >
-                    {errorMessage && (
-                      <>
-                        <p className="text-sm text-red-500">{errorMessage}</p>
-                      </>
-                    )}
-                  </div>
-                  <Button variant="outline" className="w-full">
-                    Login with Google
-                  </Button>
+                    Forgot your password?
+                  </a>
+                </div>
+                <Input id="password" name="password" type="password" required />
+              </div>
+              <div className="flex flex-col gap-3">
+                <input type="hidden" name="redirectTo" value={callbackUrl} />
+                <Button
+                  type="submit"
+                  className="w-full"
+                  aria-disabled={isPending}
+                >
+                  Login
+                </Button>
+                <div
+                  className="flex h-4 items-end space-x-1"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  {errorMessage && (
+                    <>
+                      <span className="text-sm text-red-500">{errorMessage}</span>
+                    </>
+                  )}
                 </div>
               </div>
-              <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <a href="#" className="underline underline-offset-4">
-                  Sign up
-                </a>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+          </form>
+          <div className="mt-4">
+            <Button variant="outline" className="w-full">
+              Login with Google
+            </Button>
+          </div>
+          <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <a href="#" className="underline underline-offset-4">
+              Sign up
+            </a>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
