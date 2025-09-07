@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
-   const [invoice, customers] = await Promise.all([
+  const [invoice, customers] = await Promise.all([
     fetchInvoiceById(id),
     fetchCustomers(),
   ]);
@@ -28,7 +28,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
             },
           ]}
         />
-<Form invoice={invoice} customers={customers} />
+        <Form invoice={invoice} customers={customers} />
       </main>
     </div>
   );

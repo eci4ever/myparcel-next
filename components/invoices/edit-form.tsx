@@ -1,28 +1,39 @@
-"use client"
+"use client";
 
-import type { CustomerField, InvoiceForm } from "@/app/lib/definitions"
-import { CheckIcon, ClockIcon, CurrencyDollarIcon, UserCircleIcon } from "@heroicons/react/24/outline"
-import Link from "next/link"
-import { updateInvoice, type State } from "@/app/lib/actions"
-import { useActionState } from "react"
+import type { CustomerField, InvoiceForm } from "@/app/lib/definitions";
+import {
+  CheckIcon,
+  ClockIcon,
+  CurrencyDollarIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { updateInvoice, type State } from "@/app/lib/actions";
+import { useActionState } from "react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function EditInvoiceForm({
   invoice,
   customers,
 }: {
-  invoice: InvoiceForm
-  customers: CustomerField[]
+  invoice: InvoiceForm;
+  customers: CustomerField[];
 }) {
-  const initialState: State = { message: null, errors: {} }
-  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id)
-  const [state, formAction] = useActionState(updateInvoiceWithId, initialState)
+  const initialState: State = { message: null, errors: {} };
+  const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
+  const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
 
   return (
     <form action={formAction}>
@@ -96,8 +107,14 @@ export default function EditInvoiceForm({
 
           {/* Invoice Status */}
           <div className="mb-6">
-            <Label className="text-sm font-medium">Set the invoice status</Label>
-            <RadioGroup name="status" defaultValue={invoice.status} className="mt-2">
+            <Label className="text-sm font-medium">
+              Set the invoice status
+            </Label>
+            <RadioGroup
+              name="status"
+              defaultValue={invoice.status}
+              className="mt-2"
+            >
               <Card className="p-4">
                 <div className="flex gap-6">
                   <div className="flex items-center space-x-2">
@@ -135,7 +152,9 @@ export default function EditInvoiceForm({
 
           {/* General error message */}
           <div aria-live="polite" aria-atomic="true">
-            {state.message ? <p className="my-2 text-sm text-destructive">{state.message}</p> : null}
+            {state.message ? (
+              <p className="my-2 text-sm text-destructive">{state.message}</p>
+            ) : null}
           </div>
         </CardContent>
       </Card>
@@ -147,5 +166,5 @@ export default function EditInvoiceForm({
         <Button type="submit">Edit Invoice</Button>
       </div>
     </form>
-  )
+  );
 }

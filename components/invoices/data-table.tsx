@@ -113,12 +113,14 @@ export const schema = z.object({
   reviewer: z.string(),
 });
 
+
+
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
   const { attributes, listeners } = useSortable({
     id,
   });
-
+  
   return (
     <Button
       {...attributes}
@@ -339,7 +341,7 @@ export function DataTable({
       });
     }
   }
-
+  const router = useRouter();
   return (
     <Tabs
       defaultValue="outline"
@@ -357,7 +359,11 @@ export function DataTable({
           />
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(`/dashboard/invoices/create`)}
+          >
             <IconPlus />
             <span className="hidden lg:inline">Add Invoice</span>
           </Button>
