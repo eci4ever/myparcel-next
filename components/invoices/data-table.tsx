@@ -2,25 +2,6 @@
 
 import * as React from "react";
 import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type UniqueIdentifier,
-} from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import {
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
@@ -33,6 +14,7 @@ import {
   IconLoader,
   IconPlus,
   IconTrendingUp,
+  IconTrash,
 } from "@tabler/icons-react";
 import {
   ColumnDef,
@@ -49,30 +31,11 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import { toast } from "sonner";
 import { z } from "zod";
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -102,45 +65,19 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
 import { useRouter } from "next/navigation";
+import { deleteInvoiceAction, deleteInvoicesAction } from "@/app/lib/actions";
 
 export const schema = z.object({
-  id: z.number(),
+  id: z.uuid(),
   header: z.string(),
   type: z.string(),
   status: z.string(),
-  target: z.string(),
-  limit: z.string(),
+  amount: z.string(),
+  date: z.string(),
   reviewer: z.string(),
 });
 
-
-
-// Create a separate component for the drag handle
-function DragHandle({ id }: { id: number }) {
-  const { attributes, listeners } = useSortable({
-    id,
-  });
-  
-  return (
-    <Button
-      {...attributes}
-      {...listeners}
-      variant="ghost"
-      size="icon"
-      className="text-muted-foreground size-7 hover:bg-transparent"
-    >
-      <IconGripVertical className="text-muted-foreground size-3" />
-      <span className="sr-only">Drag to reorder</span>
-    </Button>
-  );
-}
-
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
-  },
+const columns = (handleDelete: (id: string) => void): ColumnDef<z.infer<typeof schema>>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -207,8 +144,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const id = row.original.id.toString(); // Access the row's id
+      const id = row.original.id.toString();
       const router = useRouter();
+      
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -222,26 +160,16 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
-            {/* Pass the id as an argument */}
             <DropdownMenuItem
               onClick={() => router.push(`/dashboard/invoices/${id}/edit`)}
             >
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => router.push("/dashboard/invoices")}
-            >
-              Make a copy
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => router.push("/dashboard/invoices")}
-            >
-              Favorite
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
+            <DropdownMenuItem 
               variant="destructive"
-              onClick={() => router.push("/dashboard/invoices")}
+              onClick={() => handleDelete(id)}
+              className="cursor-pointer"
             >
               Delete
             </DropdownMenuItem>
@@ -252,63 +180,132 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
 ];
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
-  const { transform, transition, setNodeRef, isDragging } = useSortable({
-    id: row.original.id,
-  });
-
-  return (
-    <TableRow
-      data-state={row.getIsSelected() && "selected"}
-      data-dragging={isDragging}
-      ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition: transition,
-      }}
-    >
-      {row.getVisibleCells().map((cell) => (
-        <TableCell key={cell.id}>
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </TableCell>
-      ))}
-    </TableRow>
-  );
-}
-
 export function DataTable({
   data: initialData,
 }: {
   data: z.infer<typeof schema>[];
 }) {
-  const [data, setData] = React.useState(() => initialData);
+  const [data, setData] = React.useState(() => {
+    // Sort initial data by date in descending order (newest first)
+    return [...initialData].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  });
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([
+    // Set initial sorting to date descending
+    { id: "date", desc: true }
+  ]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
-  const sortableId = React.useId();
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {}),
-  );
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [deleteStatus, setDeleteStatus] = React.useState<{success: boolean, message: string} | null>(null);
+  const router = useRouter();
 
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id) || [],
-    [data],
-  );
+  // Function to handle invoice deletion using server action
+  const handleDelete = async (id: string) => {
+    setIsDeleting(true);
+    setDeleteStatus(null);
+    
+    try {
+      // Call the server action imported from the separate file
+      const result = await deleteInvoiceAction(id);
+      
+      if (result.success) {
+        // Update the local state to remove the deleted invoice
+        setData(prevData => prevData.filter(invoice => invoice.id.toString() !== id));
+        setDeleteStatus({ success: true, message: result.message });
+      } else {
+        setDeleteStatus({ success: false, message: result.message || "Failed to delete invoice" });
+      }
+    } catch (error) {
+      console.error("Failed to delete invoice:", error);
+      setDeleteStatus({ 
+        success: false, 
+        message: error instanceof Error ? error.message : "An error occurred while deleting the invoice" 
+      });
+    } finally {
+      setIsDeleting(false);
+      
+      // Clear status message after 3 seconds
+      setTimeout(() => {
+        setDeleteStatus(null);
+      }, 3000);
+    }
+  };
+
+  // Function to handle multiple invoice deletion
+  const handleDeleteMultiple = async () => {
+    const selectedRowIds = Object.keys(rowSelection);
+    
+    if (selectedRowIds.length === 0) {
+      setDeleteStatus({ success: false, message: "Please select at least one invoice to delete" });
+      setTimeout(() => setDeleteStatus(null), 3000);
+      return;
+    }
+    
+    setIsDeleting(true);
+    setDeleteStatus(null);
+    
+    try {
+      // Call the server action for multiple deletion
+      const result = await deleteInvoicesAction(selectedRowIds);
+      
+      if (result.success) {
+        // Update the local state to remove the deleted invoices
+        setData(prevData => prevData.filter(invoice => !selectedRowIds.includes(invoice.id.toString())));
+        // Clear selection
+        setRowSelection({});
+        setDeleteStatus({ success: true, message: result.message });
+      } else {
+        setDeleteStatus({ success: false, message: result.message || "Failed to delete invoices" });
+      }
+    } catch (error) {
+      console.error("Failed to delete invoices:", error);
+      setDeleteStatus({ 
+        success: false, 
+        message: error instanceof Error ? error.message : "An error occurred while deleting the invoices" 
+      });
+    } finally {
+      setIsDeleting(false);
+      
+      // Clear status message after 3 seconds
+      setTimeout(() => {
+        setDeleteStatus(null);
+      }, 3000);
+    }
+  };
+
+  // Function to add new invoice to the table
+  const addNewInvoice = React.useCallback((newInvoice: z.infer<typeof schema>) => {
+    // Add new invoice at the beginning of the array
+    setData(prevData => [newInvoice, ...prevData]);
+    
+    // Reset to first page to show the new record
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  }, []);
+
+  // Listen for new invoice events
+  React.useEffect(() => {
+    const handleNewInvoice = (event: CustomEvent) => {
+      addNewInvoice(event.detail);
+    };
+
+    // Add event listener for custom event
+    window.addEventListener('newInvoice', handleNewInvoice as EventListener);
+    
+    return () => {
+      window.removeEventListener('newInvoice', handleNewInvoice as EventListener);
+    };
+  }, [addNewInvoice]);
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columns(handleDelete),
     state: {
       sorting,
       columnVisibility,
@@ -331,17 +328,8 @@ export function DataTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
-    }
-  }
-  const router = useRouter();
+  const selectedCount = Object.keys(rowSelection).length;
+
   return (
     <Tabs
       defaultValue="outline"
@@ -359,6 +347,17 @@ export function DataTable({
           />
         </div>
         <div className="flex items-center gap-2">
+          {selectedCount > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteMultiple}
+              disabled={isDeleting}
+            >
+              <IconTrash className="mr-1" size={16} />
+              Delete Selected ({selectedCount})
+            </Button>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -369,63 +368,77 @@ export function DataTable({
           </Button>
         </div>
       </div>
+      
+      {/* Status Message */}
+      {deleteStatus && (
+        <div className={`px-4 lg:px-6 ${deleteStatus.success ? 'text-green-600' : 'text-red-600'}`}>
+          {deleteStatus.message}
+        </div>
+      )}
+      
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
+        >
+        {isDeleting && (
+          <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
+            <div className="flex items-center gap-2 bg-background p-4 rounded-lg border">
+              <IconLoader className="animate-spin" />
+              <span>Deleting invoice{selectedCount > 1 ? 's' : ''}...</span>
+            </div>
+          </div>
+        )}
         <div className="overflow-hidden rounded-lg border">
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis]}
-            onDragEnd={handleDragEnd}
-            sensors={sensors}
-            id={sortableId}
-          >
-            <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows?.length ? (
-                  <SortableContext
-                    items={dataIds}
-                    strategy={verticalListSortingStrategy}
+          <Table>
+            <TableHeader className="bg-muted sticky top-0 z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow 
+                    key={row.id} 
+                    data-state={row.getIsSelected() && "selected"}
+                    className={row.getIsSelected() ? "bg-muted/50" : ""}
                   >
-                    {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} />
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
                     ))}
-                  </SortableContext>
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No results.
-                    </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </DndContext>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
         <div className="flex items-center justify-between px-4">
-          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
+          <div className="text-muted-foreground flex flex-1 text-sm">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
             {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
@@ -502,200 +515,6 @@ export function DataTable({
           </div>
         </div>
       </TabsContent>
-      <TabsContent
-        value="past-performance"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent
-        value="focus-documents"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
     </Tabs>
-  );
-}
-
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
-
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--primary)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--primary)",
-  },
-} satisfies ChartConfig;
-
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-  const isMobile = useIsMobile();
-
-  return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.header}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.header}</DrawerTitle>
-          <DrawerDescription>
-            Showing total visitors for the last 6 months
-          </DrawerDescription>
-        </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          {!isMobile && (
-            <>
-              <ChartContainer config={chartConfig}>
-                <AreaChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 0,
-                    right: 10,
-                  }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
-                    hide
-                  />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator="dot" />}
-                  />
-                  <Area
-                    dataKey="mobile"
-                    type="natural"
-                    fill="var(--color-mobile)"
-                    fillOpacity={0.6}
-                    stroke="var(--color-mobile)"
-                    stackId="a"
-                  />
-                  <Area
-                    dataKey="desktop"
-                    type="natural"
-                    fill="var(--color-desktop)"
-                    fillOpacity={0.4}
-                    stroke="var(--color-desktop)"
-                    stackId="a"
-                  />
-                </AreaChart>
-              </ChartContainer>
-              <Separator />
-              <div className="grid gap-2">
-                <div className="flex gap-2 leading-none font-medium">
-                  Trending up by 5.2% this month{" "}
-                  <IconTrendingUp className="size-4" />
-                </div>
-                <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just
-                  some random text to test the layout. It spans multiple lines
-                  and should wrap around.
-                </div>
-              </div>
-              <Separator />
-            </>
-          )}
-          <form className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="header">Header</Label>
-              <Input id="header" defaultValue={item.header} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="type">Type</Label>
-                <Select defaultValue={item.type}>
-                  <SelectTrigger id="type" className="w-full">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Table of Contents">
-                      Table of Contents
-                    </SelectItem>
-                    <SelectItem value="Executive Summary">
-                      Executive Summary
-                    </SelectItem>
-                    <SelectItem value="Technical Approach">
-                      Technical Approach
-                    </SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Capabilities">Capabilities</SelectItem>
-                    <SelectItem value="Focus Documents">
-                      Focus Documents
-                    </SelectItem>
-                    <SelectItem value="Narrative">Narrative</SelectItem>
-                    <SelectItem value="Cover Page">Cover Page</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Done">Done</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Not Started">Not Started</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="target">Target</Label>
-                <Input id="target" defaultValue={item.target} />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="limit">Limit</Label>
-                <Input id="limit" defaultValue={item.limit} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="reviewer">Reviewer</Label>
-              <Select defaultValue={item.reviewer}>
-                <SelectTrigger id="reviewer" className="w-full">
-                  <SelectValue placeholder="Select a reviewer" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                  <SelectItem value="Jamik Tashpulatov">
-                    Jamik Tashpulatov
-                  </SelectItem>
-                  <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </form>
-        </div>
-        <DrawerFooter>
-          <Button>Submit</Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Done</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
   );
 }

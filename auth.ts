@@ -9,7 +9,7 @@ import { authConfig } from "./auth.config";
 async function getUser(email: string): Promise<User | undefined> {
   try {
     const user = await sql<User[]>`SELECT * FROM users WHERE email=${email}`;
-    console.log(user[0]);
+    // console.log(user[0]);
     return user[0];
   } catch (error) {
     console.error("Failed to fetch user:", error);
@@ -29,7 +29,7 @@ export const { auth, signIn, signOut } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-          console.log(email, password);
+          // console.log(email, password);
           const user = await getUser(email);
           if (!user) return null;
 

@@ -1,20 +1,26 @@
-"use client"
+"use client";
 
-import type { CustomerField } from "@/app/lib/definitions"
-import Link from "next/link"
-import { createInvoice, type State } from "@/app/lib/actions"
-import { useActionState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Card, CardContent } from "@/components/ui/card"
-import { User, DollarSign, Clock, Check } from "lucide-react"
+import type { CustomerField } from "@/app/lib/definitions";
+import Link from "next/link";
+import { createInvoice, type State } from "@/app/lib/actions";
+import { useActionState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Card, CardContent } from "@/components/ui/card";
+import { User, DollarSign, Clock, Check } from "lucide-react";
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
-  const initialState: State = { message: null, errors: {} }
-  const [state, formAction] = useActionState(createInvoice, initialState)
+  const initialState: State = { message: null, errors: {} };
+  const [state, formAction] = useActionState(createInvoice, initialState);
 
   return (
     <form action={formAction}>
@@ -83,7 +89,9 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
 
           {/* Invoice Status */}
           <div className="mb-6">
-            <Label className="text-sm font-medium">Set the invoice status</Label>
+            <Label className="text-sm font-medium">
+              Set the invoice status
+            </Label>
             <RadioGroup name="status" className="mt-2">
               <div className="flex items-center space-x-6">
                 <div className="flex items-center space-x-2">
@@ -117,7 +125,9 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </div>
 
           <div aria-live="polite" aria-atomic="true">
-            {state.message ? <p className="mt-2 text-sm text-destructive">{state.message}</p> : null}
+            {state.message ? (
+              <p className="mt-2 text-sm text-destructive">{state.message}</p>
+            ) : null}
           </div>
         </CardContent>
       </Card>
@@ -129,5 +139,5 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
         <Button type="submit">Create Invoice</Button>
       </div>
     </form>
-  )
+  );
 }

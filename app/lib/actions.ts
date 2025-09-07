@@ -41,11 +41,9 @@ const FormSchema = z.object({
   status: z.enum(["pending", "paid"], {
     message: "Please select an invoice status.",
   }),
-  date: z
-    .string()
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Please enter a valid date.",
-    }),
+  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Please enter a valid date.",
+  }),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
@@ -134,7 +132,41 @@ export async function updateInvoice(
   redirect("/dashboard/invoices");
 }
 
-export async function deleteInvoice(id: string) {
-  await sql`DELETE FROM invoices WHERE id = ${id}`;
-  revalidatePath("/dashboard/invoices");
+export async function deleteInvoiceAction(id: string) {
+  "use server";
+  
+  // Validate the ID
+  if (!id || typeof id !== "string") {
+    throw new Error("Invalid invoice ID");
+  }
+  
+  try {
+   
+    await sql`DELETE FROM invoices WHERE id = ${id}`;
+    revalidatePath("/dashboard/invoices");
+    
+    return { success: true, message: "Invoice deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting invoice:", error);
+    throw new Error("Failed to delete invoice");
+  }
+}
+
+export async function deleteInvoicesAction(ids: string[]) {
+  if (!ids || ids.length === 0) {
+    throw new Error("No invoice IDs provided");
+  }
+
+  try {
+    // Delete semua sekali gus
+    await sql`DELETE FROM invoices WHERE id = ANY(${ids})`;
+
+    // Refresh path
+    revalidatePath("/dashboard/invoices");
+
+    return { success: true, message: `${ids.length} invoice(s) deleted successfully` };
+  } catch (error) {
+    console.error("Error deleting invoices:", error);
+    throw new Error("Failed to delete invoices");
+  }
 }

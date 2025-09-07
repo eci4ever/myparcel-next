@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-    const customers = await fetchCustomers();
+  const customers = await fetchCustomers();
   return (
     <div className="px-4 lg:px-6">
       <main>
