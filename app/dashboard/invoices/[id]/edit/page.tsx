@@ -1,5 +1,7 @@
+import { fetchCustomers, fetchInvoiceById } from "@/app/lib/data";
 import Breadcrumbs from "@/components/invoices/breadcrumbs";
 import { Metadata } from "next";
+import Form from "@/components/invoices/edit-form";
 
 export const metadata: Metadata = {
   title: "Edit Invoice",
@@ -7,26 +9,27 @@ export const metadata: Metadata = {
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
+   const [invoice, customers] = await Promise.all([
+    fetchInvoiceById(id),
+    fetchCustomers(),
+  ]);
+  console.log("Editing Invoice:", invoice);
+  console.log("Available Customers:", customers);
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="@container/main flex flex-1 flex-col gap-2">
-        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          <div className="px-4 lg:px-6">
-            <main>
-              <Breadcrumbs
-                breadcrumbs={[
-                  { label: "Invoices", href: "/dashboard/invoices" },
-                  {
-                    label: "Edit Invoice",
-                    href: `/dashboard/invoices/${id}/edit`,
-                    active: true,
-                  },
-                ]}
-              />
-            </main>
-          </div>
-        </div>
-      </div>
+    <div className="px-4 lg:px-6">
+      <main>
+        <Breadcrumbs
+          breadcrumbs={[
+            { label: "Invoices", href: "/dashboard/invoices" },
+            {
+              label: "Edit Invoice",
+              href: `/dashboard/invoices/${id}/edit`,
+              active: true,
+            },
+          ]}
+        />
+<Form invoice={invoice} customers={customers} />
+      </main>
     </div>
   );
 }

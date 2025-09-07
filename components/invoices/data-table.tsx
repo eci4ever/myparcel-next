@@ -101,7 +101,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const schema = z.object({
   id: z.number(),
@@ -205,7 +205,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const id = row.original.id.toString() // Access the row's id
+      const id = row.original.id.toString(); // Access the row's id
       const router = useRouter();
       return (
         <DropdownMenu>
@@ -221,13 +221,25 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
             {/* Pass the id as an argument */}
-            <DropdownMenuItem onClick={() => router.push(`/dashboard/invoices/${id}/edit`)}>Edit</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push('/dashboard/invoices')}>Make a copy</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push('/dashboard/invoices')}>Favorite</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push(`/dashboard/invoices/${id}/edit`)}
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push("/dashboard/invoices")}
+            >
+              Make a copy
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push("/dashboard/invoices")}
+            >
+              Favorite
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               variant="destructive"
-              onClick={() => router.push('/dashboard/invoices')}
+              onClick={() => router.push("/dashboard/invoices")}
             >
               Delete
             </DropdownMenuItem>
