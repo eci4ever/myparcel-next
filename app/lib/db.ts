@@ -1,4 +1,4 @@
-import postgres from "postgres";
+import postgres, { Sql } from "postgres";
 
 let sql: any;
 

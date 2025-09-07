@@ -7,7 +7,7 @@ import {
   users,
 } from "@/app/lib/placeholder-data";
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: false }); // local = false, cloud = 'require'
+import sql from "@/app/lib/db";
 
 // Seed Users
 async function seedUsers() {
@@ -18,7 +18,8 @@ async function seedUsers() {
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       email TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL
+      password TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW()
     );
   `;
 
@@ -41,7 +42,8 @@ async function seedCustomers() {
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL,
-      image_url VARCHAR(255) NOT NULL
+      image_url VARCHAR(255) NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW()
     );
   `;
 
@@ -64,7 +66,8 @@ async function seedInvoices() {
       customer_id UUID NOT NULL,
       amount INT NOT NULL,
       status VARCHAR(255) NOT NULL,
-      date DATE NOT NULL
+      date DATE NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW()
     );
   `;
 
@@ -98,7 +101,7 @@ async function seedRevenue() {
 // API Route
 export async function GET() {
   try {
-    await sql.begin(async (tx) => {
+    await sql.begin(async (tx: any) => {
       await seedUsers();
       await seedCustomers();
       await seedInvoices();

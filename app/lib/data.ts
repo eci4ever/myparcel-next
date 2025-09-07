@@ -226,12 +226,13 @@ export async function fetchAllInvoices() {
         invoices.amount,
         invoices.date,
         invoices.status,
+        invoices.created_at,
         customers.name,
         customers.email,
         customers.image_url
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
+      ORDER BY invoices.created_at DESC
     `;
 
     return invoices;
