@@ -75,7 +75,9 @@ export function LoginForm({
                 >
                   {errorMessage && (
                     <>
-                      <span className="text-sm text-red-500">{errorMessage}</span>
+                      <span className="text-sm text-red-500">
+                        {errorMessage}
+                      </span>
                     </>
                   )}
                 </div>

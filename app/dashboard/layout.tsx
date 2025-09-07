@@ -7,7 +7,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-      <SidebarProvider
+    <SidebarProvider
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -19,10 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <SidebarInset>
         <SiteHeader />
 
-            <div>
-              {children}
-            </div>
-
+        <div>{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

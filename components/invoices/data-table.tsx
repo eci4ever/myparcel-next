@@ -101,6 +101,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
+import {useRouter} from "next/navigation";
 
 export const schema = z.object({
   id: z.number(),
@@ -178,13 +179,13 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "amount",
     header: "Amount",
-    cell: ({ row }) => <div>{ formatCurrency(row.getValue("amount"))}</div>,
+    cell: ({ row }) => <div>{formatCurrency(row.getValue("amount"))}</div>,
     enableHiding: false,
   },
   {
     accessorKey: "date",
     header: "Date",
-    cell: ({ row }) => <div>{ formatDateToLocal(row.getValue("date"))}</div>,
+    cell: ({ row }) => <div>{formatDateToLocal(row.getValue("date"))}</div>,
     enableHiding: false,
   },
   {
@@ -203,27 +204,37 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    cell: ({ row }) => {
+      const id = row.original.id.toString() // Access the row's id
+      const router = useRouter();
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+              size="icon"
+            >
+              <IconDotsVertical />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-32">
+            {/* Pass the id as an argument */}
+            <DropdownMenuItem onClick={() => router.push(`/dashboard/invoices/${id}/edit`)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/dashboard/invoices')}>Make a copy</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/dashboard/invoices')}>Favorite</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => router.push('/dashboard/invoices')}
+            >
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
 
@@ -324,19 +335,19 @@ export function DataTable({
     >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-4">
-        <Input
-          placeholder="Filter by email..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="w-full lg:w-96"
-        />
+          <Input
+            placeholder="Filter by email..."
+            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("email")?.setFilterValue(event.target.value)
+            }
+            className="w-full lg:w-96"
+          />
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm">
             <IconPlus />
-            <span className="hidden lg:inline">Add Section</span>
+            <span className="hidden lg:inline">Add Invoice</span>
           </Button>
         </div>
       </div>
