@@ -171,3 +171,44 @@ export async function deleteInvoicesAction(ids: string[]) {
     throw new Error("Failed to delete invoices");
   }
 }
+
+export async function deleteCustomerAction(id: string) {
+  "use server";
+
+  // Validate the ID
+  if (!id || typeof id !== "string") {
+    throw new Error("Invalid customer ID");
+  }
+
+  try {
+    await sql`DELETE FROM customers WHERE id = ${id}`;
+    revalidatePath("/dashboard/customers");
+
+    return { success: true, message: "customer deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting customer:", error);
+    throw new Error("Failed to delete customer");
+  }
+}
+
+export async function deleteCustomersAction(ids: string[]) {
+  if (!ids || ids.length === 0) {
+    throw new Error("No customer IDs provided");
+  }
+
+  try {
+    // Delete semua sekali gus
+    await sql`DELETE FROM customers WHERE id = ANY(${ids})`;
+
+    // Refresh path
+    revalidatePath("/dashboard/customers");
+
+    return {
+      success: true,
+      message: `${ids.length} customer(s) deleted successfully`,
+    };
+  } catch (error) {
+    console.error("Error deleting customer:", error);
+    throw new Error("Failed to delete customer");
+  }
+}

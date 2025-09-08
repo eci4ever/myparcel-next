@@ -91,19 +91,19 @@ async function _seedRevenue() {
   }
 }
 
-// API Route
-// export async function GET() {
-//   try {
-//     await sql.begin(async (_tx: any) => {
-//       await seedUsers();
-//       await seedCustomers();
-//       await seedInvoices();
-//       await seedRevenue();
-//     });
+//API Route
+export async function GET() {
+  try {
+    await sql.begin(async (_tx: any) => {
+      await _seedUsers();
+      await _seedCustomers();
+      await _seedInvoices();
+      await _seedRevenue();
+    });
 
-//     return Response.json({ message: "Database seeded successfully ✅" });
-//   } catch (error: any) {
-//     console.error(error);
-//     return Response.json({ error: error.message }, { status: 500 });
-//   }
-// }
+    return Response.json({ message: "Database seeded successfully ✅" });
+  } catch (error: any) {
+    console.error(error);
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+}

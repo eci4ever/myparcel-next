@@ -1,10 +1,11 @@
 import { fetchAllCustomers } from "@/lib/data";
+import { DataTable } from "./ui/data-table";
 
 export default async function CustomersPage() {
-  const data = await fetchAllCustomers();
+  const customers = await fetchAllCustomers();
   return (
-    <div className="px-4 lg:px-6">
-      <h1>Selamat Datang</h1>
+    <div>
+      <DataTable data={customers} />
     </div>
   );
 }

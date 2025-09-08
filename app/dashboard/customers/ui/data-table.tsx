@@ -1,17 +1,6 @@
 "use client";
 
 import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
-  IconCircleCheckFilled,
-  IconDotsVertical,
-  IconLoader,
-  IconPlus,
-  IconTrash,
-} from "@tabler/icons-react";
-import {
   type ColumnDef,
   type ColumnFiltersState,
   flexRender,
@@ -25,12 +14,10 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { useRouter } from "next/navigation";
 import * as React from "react";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -56,17 +44,38 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { deleteInvoiceAction, deleteInvoicesAction } from "@/lib/actions";
-import { formatCurrency, formatDateToLocal } from "@/lib/utils";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
+  IconDotsVertical,
+  IconPlus,
+  IconTrash,
+} from "@tabler/icons-react";
+import { deleteCustomerAction, deleteCustomersAction } from "@/lib/actions";
 
 export const schema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string(),
-  amount: z.number(),
-  date: z.string(),
-  status: z.string(),
+  image_url: z.string(),
 });
+
+// Mock delete functions - replace with your actual API calls
+const deleteCustomer = async (id: string) => {
+  // Simulate API call
+  await deleteCustomerAction(id);
+  // await new Promise(resolve => setTimeout(resolve, 500));
+  return { success: true, message: "Customer deleted successfully" };
+};
+
+const deleteCustomers = async (ids: string[]) => {
+  // Simulate API call
+  // await new Promise(resolve => setTimeout(resolve, 800));
+  await deleteCustomersAction(ids); // Modify this to handle multiple deletions in your actual implementation
+  return { success: true, message: `${ids.length} customers deleted successfully` };
+};
 
 const columns = (
   handleDelete: (id: string) => void,
@@ -98,76 +107,60 @@ const columns = (
     enableHiding: false,
   },
   {
+    accessorKey: "image_url",
+    header: "Avatar",
+    cell: ({ row }) => (
+      <img
+        src={row.getValue("image_url")}
+        alt={row.getValue("name")}
+        className="h-10 w-10 mx-6 rounded-full object-cover"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "name",
     header: "Customer",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
     enableHiding: false,
   },
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => <div>{formatCurrency(row.getValue("amount"))}</div>,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "date",
-    header: "Date",
-    cell: ({ row }) => <div>{formatDateToLocal(row.getValue("date"))}</div>,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === "paid" ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-        ) : (
-          <IconLoader />
-        )}
-        {row.original.status}
-      </Badge>
-    ),
+    cell: ({ row }) => <div className="text-muted-foreground">{row.getValue("email")}</div>,
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const id = row.original.id.toString();
-      const router = useRouter();
-
+      const id = row.original.id;
+      
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-              size="icon"
-            >
-              <IconDotsVertical />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem
-              onClick={() => router.push(`/dashboard/invoices/${id}/edit`)}
-            >
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              variant="destructive"
-              onClick={() => handleDelete(id)}
-              className="cursor-pointer"
-            >
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                size="icon"
+              >
+                <IconDotsVertical />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                variant="destructive"
+                onClick={() => handleDelete(id)}
+                className="cursor-pointer"
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     },
   },
@@ -178,22 +171,12 @@ export function DataTable({
 }: {
   data: z.infer<typeof schema>[];
 }) {
-  const [data, setData] = React.useState(() => {
-    // Sort initial data by date in descending order (newest first)
-    return [...initialData].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
-  });
+  const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([
-    // Set initial sorting to date descending
-    { id: "date", desc: true },
-  ]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
@@ -203,57 +186,40 @@ export function DataTable({
     success: boolean;
     message: string;
   } | null>(null);
-  const router = useRouter();
 
-  // Function to handle invoice deletion using server action
+  // Function to handle single customer deletion
   const handleDelete = async (id: string) => {
     setIsDeleting(true);
     setDeleteStatus(null);
 
     try {
-      // Call the server action imported from the separate file
-      const result = await deleteInvoiceAction(id);
+      const result = await deleteCustomer(id);
 
       if (result.success) {
-        // Update the local state to remove the deleted invoice
-        setData((prevData) =>
-          prevData.filter((invoice) => invoice.id.toString() !== id),
-        );
+        // Update the local state to remove the deleted customer
+        setData(prevData => prevData.filter(customer => customer.id !== id));
         setDeleteStatus({ success: true, message: result.message });
       } else {
-        setDeleteStatus({
-          success: false,
-          message: result.message || "Failed to delete invoice",
-        });
+        setDeleteStatus({ success: false, message: result.message || "Failed to delete customer" });
       }
     } catch (error) {
-      console.error("Failed to delete invoice:", error);
+      console.error("Failed to delete customer:", error);
       setDeleteStatus({
         success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "An error occurred while deleting the invoice",
+        message: error instanceof Error ? error.message : "An error occurred while deleting the customer",
       });
     } finally {
       setIsDeleting(false);
-
-      // Clear status message after 3 seconds
-      setTimeout(() => {
-        setDeleteStatus(null);
-      }, 3000);
+      setTimeout(() => setDeleteStatus(null), 3000);
     }
   };
 
-  // Function to handle multiple invoice deletion
+  // Function to handle multiple customer deletion
   const handleDeleteMultiple = async () => {
     const selectedRowIds = Object.keys(rowSelection);
-
+    
     if (selectedRowIds.length === 0) {
-      setDeleteStatus({
-        success: false,
-        message: "Please select at least one invoice to delete",
-      });
+      setDeleteStatus({ success: false, message: "Please select at least one customer to delete" });
       setTimeout(() => setDeleteStatus(null), 3000);
       return;
     }
@@ -262,72 +228,28 @@ export function DataTable({
     setDeleteStatus(null);
 
     try {
-      // Call the server action for multiple deletion
-      const result = await deleteInvoicesAction(selectedRowIds);
+      const result = await deleteCustomers(selectedRowIds);
 
       if (result.success) {
-        // Update the local state to remove the deleted invoices
-        setData((prevData) =>
-          prevData.filter(
-            (invoice) => !selectedRowIds.includes(invoice.id.toString()),
-          ),
-        );
+        // Update the local state to remove the deleted customers
+        setData(prevData => prevData.filter(customer => !selectedRowIds.includes(customer.id)));
         // Clear selection
         setRowSelection({});
         setDeleteStatus({ success: true, message: result.message });
       } else {
-        setDeleteStatus({
-          success: false,
-          message: result.message || "Failed to delete invoices",
-        });
+        setDeleteStatus({ success: false, message: result.message || "Failed to delete customers" });
       }
     } catch (error) {
-      console.error("Failed to delete invoices:", error);
+      console.error("Failed to delete customers:", error);
       setDeleteStatus({
         success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "An error occurred while deleting the invoices",
+        message: error instanceof Error ? error.message : "An error occurred while deleting the customers",
       });
     } finally {
       setIsDeleting(false);
-
-      // Clear status message after 3 seconds
-      setTimeout(() => {
-        setDeleteStatus(null);
-      }, 3000);
+      setTimeout(() => setDeleteStatus(null), 3000);
     }
   };
-
-  // Function to add new invoice to the table
-  const addNewInvoice = React.useCallback(
-    (newInvoice: z.infer<typeof schema>) => {
-      // Add new invoice at the beginning of the array
-      setData((prevData) => [newInvoice, ...prevData]);
-
-      // Reset to first page to show the new record
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-    },
-    [],
-  );
-
-  // Listen for new invoice events
-  React.useEffect(() => {
-    const handleNewInvoice = (event: CustomEvent) => {
-      addNewInvoice(event.detail);
-    };
-
-    // Add event listener for custom event
-    window.addEventListener("newInvoice", handleNewInvoice as EventListener);
-
-    return () => {
-      window.removeEventListener(
-        "newInvoice",
-        handleNewInvoice as EventListener,
-      );
-    };
-  }, [addNewInvoice]);
 
   const table = useReactTable({
     data,
@@ -339,7 +261,7 @@ export function DataTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) => row.id,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -360,18 +282,16 @@ export function DataTable({
     <Tabs
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6"
-     >
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
-        <div className="flex items-center gap-4">
-          <Input
-            placeholder="Filter by email..."
-            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("email")?.setFilterValue(event.target.value)
-            }
-            className="w-full lg:w-96"
-          />
-        </div>
+        <Input
+          placeholder="Filter by email..."
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("email")?.setFilterValue(event.target.value)
+          }
+          className="w-full lg:w-96"
+        />
         <div className="flex items-center gap-2">
           {selectedCount > 0 && (
             <Button
@@ -384,22 +304,16 @@ export function DataTable({
               Delete Selected ({selectedCount})
             </Button>
           )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => router.push(`/dashboard/invoices/create`)}
-          >
+          <Button variant="outline" size="sm">
             <IconPlus />
-            <span className="hidden lg:inline">Add Invoice</span>
+            <span className="hidden lg:inline">Add Customer</span>
           </Button>
         </div>
       </div>
 
       {/* Status Message */}
       {deleteStatus && (
-        <div
-          className={`px-4 lg:px-6 ${deleteStatus.success ? "text-green-600" : "text-red-600"}`}
-        >
+        <div className={`px-4 lg:px-6 ${deleteStatus.success ? 'text-green-600' : 'text-red-600'}`}>
           {deleteStatus.message}
         </div>
       )}
@@ -411,26 +325,29 @@ export function DataTable({
         {isDeleting && (
           <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
             <div className="flex items-center gap-2 bg-background p-4 rounded-lg border">
-              <IconLoader className="animate-spin" />
-              <span>Deleting invoice{selectedCount > 1 ? "s" : ""}...</span>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+              <span>Deleting customer{selectedCount > 1 ? 's' : ''}...</span>
             </div>
           </div>
         )}
+
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="bg-muted sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
               ))}
             </TableHeader>
@@ -444,10 +361,7 @@ export function DataTable({
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -465,6 +379,7 @@ export function DataTable({
             </TableBody>
           </Table>
         </div>
+
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground flex flex-1 text-sm">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -542,6 +457,22 @@ export function DataTable({
             </div>
           </div>
         </div>
+      </TabsContent>
+
+      <TabsContent
+        value="past-performance"
+        className="flex flex-col px-4 lg:px-6"
+      >
+        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
+      </TabsContent>
+      <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
+        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
+      </TabsContent>
+      <TabsContent
+        value="focus-documents"
+        className="flex flex-col px-4 lg:px-6"
+      >
+        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>
   );
