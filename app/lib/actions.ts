@@ -134,17 +134,16 @@ export async function updateInvoice(
 
 export async function deleteInvoiceAction(id: string) {
   "use server";
-  
+
   // Validate the ID
   if (!id || typeof id !== "string") {
     throw new Error("Invalid invoice ID");
   }
-  
+
   try {
-   
     await sql`DELETE FROM invoices WHERE id = ${id}`;
     revalidatePath("/dashboard/invoices");
-    
+
     return { success: true, message: "Invoice deleted successfully" };
   } catch (error) {
     console.error("Error deleting invoice:", error);
@@ -164,7 +163,10 @@ export async function deleteInvoicesAction(ids: string[]) {
     // Refresh path
     revalidatePath("/dashboard/invoices");
 
-    return { success: true, message: `${ids.length} invoice(s) deleted successfully` };
+    return {
+      success: true,
+      message: `${ids.length} invoice(s) deleted successfully`,
+    };
   } catch (error) {
     console.error("Error deleting invoices:", error);
     throw new Error("Failed to delete invoices");

@@ -185,6 +185,25 @@ export async function fetchCustomers() {
   }
 }
 
+export async function fetchAllCustomers() {
+  try {
+    const customers = await sql<Customer[]>`
+      SELECT
+        id,
+        name,
+        email,
+        image_url
+      FROM customers
+      ORDER BY name ASC
+    `;
+
+    return customers;
+  } catch (err) {
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch all customers.");
+  }
+}
+
 export async function fetchFilteredCustomers(query: string) {
   try {
     const data = await sql<CustomersTableType[]>`

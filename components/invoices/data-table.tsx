@@ -77,7 +77,9 @@ export const schema = z.object({
   reviewer: z.string(),
 });
 
-const columns = (handleDelete: (id: string) => void): ColumnDef<z.infer<typeof schema>>[] => [
+const columns = (
+  handleDelete: (id: string) => void,
+): ColumnDef<z.infer<typeof schema>>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -146,7 +148,7 @@ const columns = (handleDelete: (id: string) => void): ColumnDef<z.infer<typeof s
     cell: ({ row }) => {
       const id = row.original.id.toString();
       const router = useRouter();
-      
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -166,7 +168,7 @@ const columns = (handleDelete: (id: string) => void): ColumnDef<z.infer<typeof s
               Edit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               variant="destructive"
               onClick={() => handleDelete(id)}
               className="cursor-pointer"
@@ -187,50 +189,64 @@ export function DataTable({
 }) {
   const [data, setData] = React.useState(() => {
     // Sort initial data by date in descending order (newest first)
-    return [...initialData].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
+    return [...initialData].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
   });
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([
     // Set initial sorting to date descending
-    { id: "date", desc: true }
+    { id: "date", desc: true },
   ]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const [deleteStatus, setDeleteStatus] = React.useState<{success: boolean, message: string} | null>(null);
+  const [deleteStatus, setDeleteStatus] = React.useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
   const router = useRouter();
 
   // Function to handle invoice deletion using server action
   const handleDelete = async (id: string) => {
     setIsDeleting(true);
     setDeleteStatus(null);
-    
+
     try {
       // Call the server action imported from the separate file
       const result = await deleteInvoiceAction(id);
-      
+
       if (result.success) {
         // Update the local state to remove the deleted invoice
-        setData(prevData => prevData.filter(invoice => invoice.id.toString() !== id));
+        setData((prevData) =>
+          prevData.filter((invoice) => invoice.id.toString() !== id),
+        );
         setDeleteStatus({ success: true, message: result.message });
       } else {
-        setDeleteStatus({ success: false, message: result.message || "Failed to delete invoice" });
+        setDeleteStatus({
+          success: false,
+          message: result.message || "Failed to delete invoice",
+        });
       }
     } catch (error) {
       console.error("Failed to delete invoice:", error);
-      setDeleteStatus({ 
-        success: false, 
-        message: error instanceof Error ? error.message : "An error occurred while deleting the invoice" 
+      setDeleteStatus({
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "An error occurred while deleting the invoice",
       });
     } finally {
       setIsDeleting(false);
-      
+
       // Clear status message after 3 seconds
       setTimeout(() => {
         setDeleteStatus(null);
@@ -241,38 +257,51 @@ export function DataTable({
   // Function to handle multiple invoice deletion
   const handleDeleteMultiple = async () => {
     const selectedRowIds = Object.keys(rowSelection);
-    
+
     if (selectedRowIds.length === 0) {
-      setDeleteStatus({ success: false, message: "Please select at least one invoice to delete" });
+      setDeleteStatus({
+        success: false,
+        message: "Please select at least one invoice to delete",
+      });
       setTimeout(() => setDeleteStatus(null), 3000);
       return;
     }
-    
+
     setIsDeleting(true);
     setDeleteStatus(null);
-    
+
     try {
       // Call the server action for multiple deletion
       const result = await deleteInvoicesAction(selectedRowIds);
-      
+
       if (result.success) {
         // Update the local state to remove the deleted invoices
-        setData(prevData => prevData.filter(invoice => !selectedRowIds.includes(invoice.id.toString())));
+        setData((prevData) =>
+          prevData.filter(
+            (invoice) => !selectedRowIds.includes(invoice.id.toString()),
+          ),
+        );
         // Clear selection
         setRowSelection({});
         setDeleteStatus({ success: true, message: result.message });
       } else {
-        setDeleteStatus({ success: false, message: result.message || "Failed to delete invoices" });
+        setDeleteStatus({
+          success: false,
+          message: result.message || "Failed to delete invoices",
+        });
       }
     } catch (error) {
       console.error("Failed to delete invoices:", error);
-      setDeleteStatus({ 
-        success: false, 
-        message: error instanceof Error ? error.message : "An error occurred while deleting the invoices" 
+      setDeleteStatus({
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : "An error occurred while deleting the invoices",
       });
     } finally {
       setIsDeleting(false);
-      
+
       // Clear status message after 3 seconds
       setTimeout(() => {
         setDeleteStatus(null);
@@ -281,13 +310,16 @@ export function DataTable({
   };
 
   // Function to add new invoice to the table
-  const addNewInvoice = React.useCallback((newInvoice: z.infer<typeof schema>) => {
-    // Add new invoice at the beginning of the array
-    setData(prevData => [newInvoice, ...prevData]);
-    
-    // Reset to first page to show the new record
-    setPagination(prev => ({ ...prev, pageIndex: 0 }));
-  }, []);
+  const addNewInvoice = React.useCallback(
+    (newInvoice: z.infer<typeof schema>) => {
+      // Add new invoice at the beginning of the array
+      setData((prevData) => [newInvoice, ...prevData]);
+
+      // Reset to first page to show the new record
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    },
+    [],
+  );
 
   // Listen for new invoice events
   React.useEffect(() => {
@@ -296,10 +328,13 @@ export function DataTable({
     };
 
     // Add event listener for custom event
-    window.addEventListener('newInvoice', handleNewInvoice as EventListener);
-    
+    window.addEventListener("newInvoice", handleNewInvoice as EventListener);
+
     return () => {
-      window.removeEventListener('newInvoice', handleNewInvoice as EventListener);
+      window.removeEventListener(
+        "newInvoice",
+        handleNewInvoice as EventListener,
+      );
     };
   }, [addNewInvoice]);
 
@@ -368,23 +403,25 @@ export function DataTable({
           </Button>
         </div>
       </div>
-      
+
       {/* Status Message */}
       {deleteStatus && (
-        <div className={`px-4 lg:px-6 ${deleteStatus.success ? 'text-green-600' : 'text-red-600'}`}>
+        <div
+          className={`px-4 lg:px-6 ${deleteStatus.success ? "text-green-600" : "text-red-600"}`}
+        >
           {deleteStatus.message}
         </div>
       )}
-      
+
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-        >
+      >
         {isDeleting && (
           <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
             <div className="flex items-center gap-2 bg-background p-4 rounded-lg border">
               <IconLoader className="animate-spin" />
-              <span>Deleting invoice{selectedCount > 1 ? 's' : ''}...</span>
+              <span>Deleting invoice{selectedCount > 1 ? "s" : ""}...</span>
             </div>
           </div>
         )}
@@ -409,8 +446,8 @@ export function DataTable({
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow 
-                    key={row.id} 
+                  <TableRow
+                    key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                     className={row.getIsSelected() ? "bg-muted/50" : ""}
                   >
