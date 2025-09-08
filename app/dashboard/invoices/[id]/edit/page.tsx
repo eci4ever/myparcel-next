@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Breadcrumbs from "@/components/invoices/breadcrumbs";
-import Form from "@/components/invoices/edit-form";
+import Breadcrumbs from "@/app/dashboard/invoices/ui/breadcrumbs";
+import Form from "@/app/dashboard/invoices/ui/edit-form";
 import { fetchCustomers, fetchInvoiceById } from "@/lib/data";
 
 export const metadata: Metadata = {

@@ -1,15 +1,21 @@
+import { NextResponse } from "next/server";
 import { fetchAllInvoices } from "@/lib/data";
 
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
-    // Fetch customers after seeding
     const customers = await fetchAllInvoices();
 
-    return Response.json({
+    return NextResponse.json({
       customers,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(error);
-    return Response.json({ error: error.message }, { status: 500 });
+
+    let message = "Unknown error occurred";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

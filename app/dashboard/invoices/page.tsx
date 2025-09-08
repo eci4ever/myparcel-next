@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/invoices/data-table";
+import { DataTable } from "@/app/dashboard/invoices/ui/data-table";
 import { fetchAllInvoices } from "@/lib/data";
 
 export default async function InvoicesPage() {
