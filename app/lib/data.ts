@@ -4,8 +4,10 @@ import type {
   CustomerField,
   CustomersTableType,
   Invoice,
+  InvoiceByIdRaw,
   InvoiceForm,
   InvoicesTable,
+  LatestInvoice,
   LatestInvoiceRaw,
   Revenue,
 } from "./definitions";
@@ -39,7 +41,7 @@ export async function fetchLatestInvoices() {
       ORDER BY invoices.date DESC
       LIMIT 5`;
 
-    const latestInvoices = data.map((invoice: Invoice) => ({
+    const latestInvoices: LatestInvoice[]  = data.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
@@ -142,9 +144,9 @@ export async function fetchInvoicesPages(query: string) {
   }
 }
 
-export async function fetchInvoiceById(id: string) {
+export async function fetchInvoiceById(id: string): Promise<InvoiceForm | null> {
   try {
-    const data = await sql<InvoiceForm[]>`
+    const data = await sql<InvoiceByIdRaw[]>`
       SELECT
         invoices.id,
         invoices.customer_id,
@@ -154,13 +156,14 @@ export async function fetchInvoiceById(id: string) {
       WHERE invoices.id = ${id};
     `;
 
-    const invoice = data.map((invoice: Invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
+    if (data.length === 0) return null;
 
-    return invoice[0];
+    const invoice: InvoiceForm = {
+      ...data[0],
+      amount: data[0].amount / 100, // convert cents → dollars
+    };
+
+    return invoice;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch invoice.");
