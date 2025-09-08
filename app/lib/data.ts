@@ -144,7 +144,7 @@ export async function fetchInvoicesPages(query: string) {
   }
 }
 
-export async function fetchInvoiceById(id: string): Promise<InvoiceForm | null> {
+export async function fetchInvoiceById(id: string): Promise<InvoiceForm> {
   try {
     const data = await sql<InvoiceByIdRaw[]>`
       SELECT
@@ -156,19 +156,20 @@ export async function fetchInvoiceById(id: string): Promise<InvoiceForm | null> 
       WHERE invoices.id = ${id};
     `;
 
-    if (data.length === 0) return null;
+    if (data.length === 0) {
+      throw new Error(`Invoice with id ${id} not found`);
+    }
 
-    const invoice: InvoiceForm = {
+    return {
       ...data[0],
-      amount: data[0].amount / 100, // convert cents → dollars
+      amount: data[0].amount / 100,
     };
-
-    return invoice;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch invoice.");
   }
 }
+
 
 export async function fetchCustomers() {
   try {
