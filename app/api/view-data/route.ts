@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-import sql from "@/app/lib/db";
 import { fetchAllInvoices } from "@/app/lib/data";
 
 export async function GET() {

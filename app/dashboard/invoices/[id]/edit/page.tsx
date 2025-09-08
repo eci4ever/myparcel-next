@@ -1,6 +1,6 @@
+import type { Metadata } from "next";
 import { fetchCustomers, fetchInvoiceById } from "@/app/lib/data";
 import Breadcrumbs from "@/components/invoices/breadcrumbs";
-import { Metadata } from "next";
 import Form from "@/components/invoices/edit-form";
 
 export const metadata: Metadata = {

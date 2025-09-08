@@ -1,5 +1,5 @@
-import { DataTable } from "@/components/invoices/data-table";
 import { fetchAllInvoices } from "@/app/lib/data";
+import { DataTable } from "@/components/invoices/data-table";
 
 export default async function InvoicesPage() {
   const data = await fetchAllInvoices();

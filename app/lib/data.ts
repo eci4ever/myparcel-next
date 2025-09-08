@@ -1,4 +1,5 @@
-import {
+import sql from "@/app/lib/db";
+import type {
   Customer,
   CustomerField,
   CustomersTableType,
@@ -9,8 +10,6 @@ import {
   Revenue,
 } from "./definitions";
 import { formatCurrency } from "./utils";
-
-import sql from "@/app/lib/db";
 
 export async function fetchRevenue() {
   try {

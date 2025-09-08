@@ -1,16 +1,15 @@
 "use server";
 
-import { signIn } from "@/auth";
-import { AuthError } from "next-auth";
-import { signOut } from "@/auth";
-import sql from "./db";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { AuthError } from "next-auth";
 import { z } from "zod";
+import { signIn, signOut } from "@/auth";
+import sql from "./db";
 // ...
 
 export async function authenticate(
-  prevState: string | undefined,
+  _prevState: string | undefined,
   formData: FormData,
 ) {
   try {
@@ -41,7 +40,7 @@ const FormSchema = z.object({
   status: z.enum(["pending", "paid"], {
     message: "Please select an invoice status.",
   }),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
+  date: z.string().refine((val) => !Number.isNaN(Date.parse(val)), {
     message: "Please enter a valid date.",
   }),
 });
@@ -58,7 +57,7 @@ export type State = {
   message?: string | null;
 };
 
-export async function createInvoice(prevState: State, formData: FormData) {
+export async function createInvoice(_prevState: State, formData: FormData) {
   // Validate form fields using Zod
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get("customerId"),
@@ -85,7 +84,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
       INSERT INTO invoices (customer_id, amount, status, date)
       VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
     `;
-  } catch (error) {
+  } catch (_error) {
     // If a database error occurs, return a more specific error.
     return {
       message: "Database Error: Failed to Create Invoice.",
@@ -99,7 +98,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
 
 export async function updateInvoice(
   id: string,
-  prevState: State,
+  _prevState: State,
   formData: FormData,
 ) {
   const validatedFields = UpdateInvoice.safeParse({
@@ -124,7 +123,7 @@ export async function updateInvoice(
       SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
       WHERE id = ${id}
     `;
-  } catch (error) {
+  } catch (_error) {
     return { message: "Database Error: Failed to Update Invoice." };
   }
 

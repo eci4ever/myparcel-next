@@ -1,13 +1,11 @@
 import bcrypt from "bcrypt";
-import postgres from "postgres";
+import sql from "@/app/lib/db";
 import {
-  invoices,
   customers,
+  invoices,
   revenue,
   users,
 } from "@/app/lib/placeholder-data";
-
-import sql from "@/app/lib/db";
 
 // Seed Users
 async function seedUsers() {
@@ -101,7 +99,7 @@ async function seedRevenue() {
 // API Route
 export async function GET() {
   try {
-    await sql.begin(async (tx: any) => {
+    await sql.begin(async (_tx: any) => {
       await seedUsers();
       await seedCustomers();
       await seedInvoices();
