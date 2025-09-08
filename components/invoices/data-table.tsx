@@ -60,13 +60,12 @@ import {
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 export const schema = z.object({
-  id: z.uuid(),
-  header: z.string(),
-  type: z.string(),
-  status: z.string(),
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
   amount: z.string(),
   date: z.string(),
-  reviewer: z.string(),
+  status: z.string(),
 });
 
 const columns = (
