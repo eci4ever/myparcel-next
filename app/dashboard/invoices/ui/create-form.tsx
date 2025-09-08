@@ -3,8 +3,6 @@
 import { Check, Clock, DollarSign, User } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";
-import { createInvoice, type State } from "@/lib/actions";
-import type { CustomerField } from "@/lib/definitions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,6 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createInvoice, type State } from "@/lib/actions";
+import type { CustomerField } from "@/lib/definitions";
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
   const initialState: State = { message: null, errors: {} };

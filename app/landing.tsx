@@ -179,10 +179,11 @@ export default function Landing() {
   );
 }
 
-function InfinityIcon(props: any) {
+function InfinityIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -198,10 +199,11 @@ function InfinityIcon(props: any) {
   );
 }
 
-function InfoIcon(props: any) {
+function InfoIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -219,10 +221,11 @@ function InfoIcon(props: any) {
   );
 }
 
-function MountainIcon(props: any) {
+function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -238,10 +241,11 @@ function MountainIcon(props: any) {
   );
 }
 
-function UserPlusIcon(props: any) {
+function UserPlusIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
+      aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
