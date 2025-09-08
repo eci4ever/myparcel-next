@@ -1,6 +1,5 @@
 "use client";
 
-import type { CustomerField, InvoiceForm } from "@/app/lib/definitions";
 import {
   CheckIcon,
   ClockIcon,
@@ -8,12 +7,15 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { updateInvoice, type State } from "@/app/lib/actions";
 import { useActionState } from "react";
+import { type State, updateInvoice } from "@/app/lib/actions";
+import type { CustomerField, InvoiceForm } from "@/app/lib/definitions";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -21,8 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardContent } from "@/components/ui/card";
 
 export default function EditInvoiceForm({
   invoice,
@@ -64,12 +64,11 @@ export default function EditInvoiceForm({
 
             {/* Error display */}
             <div id="customer-error" aria-live="polite" aria-atomic="true">
-              {state.errors?.customerId &&
-                state.errors.customerId.map((error: string) => (
-                  <p className="mt-2 text-sm text-destructive" key={error}>
-                    {error}
-                  </p>
-                ))}
+              {state.errors?.customerId?.map((error: string) => (
+                <p className="mt-2 text-sm text-destructive" key={error}>
+                  {error}
+                </p>
+              ))}
             </div>
           </div>
 
@@ -96,12 +95,11 @@ export default function EditInvoiceForm({
 
             {/* Error display */}
             <div id="amount-error" aria-live="polite" aria-atomic="true">
-              {state.errors?.amount &&
-                state.errors.amount.map((error: string) => (
-                  <p className="mt-2 text-sm text-destructive" key={error}>
-                    {error}
-                  </p>
-                ))}
+              {state.errors?.amount?.map((error: string) => (
+                <p className="mt-2 text-sm text-destructive" key={error}>
+                  {error}
+                </p>
+              ))}
             </div>
           </div>
 
@@ -141,12 +139,11 @@ export default function EditInvoiceForm({
 
             {/* Error display */}
             <div id="status-error" aria-live="polite" aria-atomic="true">
-              {state.errors?.status &&
-                state.errors.status.map((error: string) => (
-                  <p className="mt-2 text-sm text-destructive" key={error}>
-                    {error}
-                  </p>
-                ))}
+              {state.errors?.status?.map((error: string) => (
+                <p className="mt-2 text-sm text-destructive" key={error}>
+                  {error}
+                </p>
+              ))}
             </div>
           </div>
 

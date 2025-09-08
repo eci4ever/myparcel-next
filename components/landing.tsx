@@ -3,8 +3,9 @@
  * @see https://v0.app/t/vYqEuvYrA6J
  * Documentation: https://v0.app/docs#integrating-generated-code-into-your-nextjs-app
  */
-import Link from "next/link";
+
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Landing() {
   return (

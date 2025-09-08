@@ -8,7 +8,7 @@ import {
 } from "@/app/lib/placeholder-data";
 
 // Seed Users
-async function seedUsers() {
+async function _seedUsers() {
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
   await sql`
@@ -32,7 +32,7 @@ async function seedUsers() {
 }
 
 // Seed Customers
-async function seedCustomers() {
+async function _seedCustomers() {
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
   await sql`
@@ -55,7 +55,7 @@ async function seedCustomers() {
 }
 
 // Seed Invoices
-async function seedInvoices() {
+async function _seedInvoices() {
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
   await sql`
@@ -79,7 +79,7 @@ async function seedInvoices() {
 }
 
 // Seed Revenue
-async function seedRevenue() {
+async function _seedRevenue() {
   await sql`
     CREATE TABLE IF NOT EXISTS revenue (
       month VARCHAR(4) NOT NULL UNIQUE,
@@ -97,18 +97,18 @@ async function seedRevenue() {
 }
 
 // API Route
-export async function GET() {
-  try {
-    await sql.begin(async (_tx: any) => {
-      await seedUsers();
-      await seedCustomers();
-      await seedInvoices();
-      await seedRevenue();
-    });
+// export async function GET() {
+//   try {
+//     await sql.begin(async (_tx: any) => {
+//       await seedUsers();
+//       await seedCustomers();
+//       await seedInvoices();
+//       await seedRevenue();
+//     });
 
-    return Response.json({ message: "Database seeded successfully ✅" });
-  } catch (error: any) {
-    console.error(error);
-    return Response.json({ error: error.message }, { status: 500 });
-  }
-}
+//     return Response.json({ message: "Database seeded successfully ✅" });
+//   } catch (error: any) {
+//     console.error(error);
+//     return Response.json({ error: error.message }, { status: 500 });
+//   }
+// }

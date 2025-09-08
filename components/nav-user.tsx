@@ -1,7 +1,5 @@
 "use client";
 
-import { logout } from "@/app/lib/actions";
-
 import {
   IconCreditCard,
   IconDotsVertical,
@@ -9,7 +7,8 @@ import {
   IconNotification,
   IconUserCircle,
 } from "@tabler/icons-react";
-
+import { useTransition } from "react";
+import { logout } from "@/app/lib/actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -26,8 +25,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useTransition } from "react";
-import { is } from "zod/v4/locales";
 
 export function NavUser({
   user,

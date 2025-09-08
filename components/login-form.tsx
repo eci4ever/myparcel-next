@@ -1,4 +1,7 @@
 "use client";
+import { useSearchParams } from "next/navigation";
+import { useActionState } from "react";
+import { authenticate } from "@/app/lib/actions";
 import { cn } from "@/app/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,9 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useActionState } from "react";
-import { authenticate } from "@/app/lib/actions";
-import { useSearchParams } from "next/navigation";
 
 export function LoginForm({
   className,
@@ -74,11 +74,7 @@ export function LoginForm({
                   aria-atomic="true"
                 >
                   {errorMessage && (
-                    <>
-                      <span className="text-sm text-red-500">
-                        {errorMessage}
-                      </span>
-                    </>
+                    <span className="text-sm text-red-500">{errorMessage}</span>
                   )}
                 </div>
               </div>

@@ -1,24 +1,19 @@
 "use client";
 
-import * as React from "react";
 import {
-  IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
   IconCircleCheckFilled,
   IconDotsVertical,
-  IconGripVertical,
-  IconLayoutColumns,
   IconLoader,
   IconPlus,
-  IconTrendingUp,
   IconTrash,
 } from "@tabler/icons-react";
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -26,19 +21,20 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
+  type VisibilityState,
 } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
+import * as React from "react";
 import { z } from "zod";
-
+import { deleteInvoiceAction, deleteInvoicesAction } from "@/app/lib/actions";
+import { formatCurrency, formatDateToLocal } from "@/app/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -61,10 +57,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
-import { useRouter } from "next/navigation";
-import { deleteInvoiceAction, deleteInvoicesAction } from "@/app/lib/actions";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 export const schema = z.object({
   id: z.uuid(),
