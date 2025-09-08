@@ -63,8 +63,8 @@ export const schema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string(),
-  amount: z.string(),
-  date: z.string(),
+  amount: z.number(),
+  date: z.date(),
   status: z.string(),
 });
 
