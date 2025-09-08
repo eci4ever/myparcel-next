@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import sql from "@/lib/db";
 import { z } from "zod";
 import type { User } from "@/lib/definitions";
-import { authConfig } from "./auth.config";
+import { authConfig } from "../auth.config";
 
 async function getUser(email: string): Promise<User | undefined> {
   try {

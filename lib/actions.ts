@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { z } from "zod";
-import { signIn, signOut } from "@/auth";
+import { signIn, signOut } from "@/lib/auth";
 import sql from "./db";
 // ...
 
