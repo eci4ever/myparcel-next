@@ -64,7 +64,7 @@ export const schema = z.object({
   name: z.string(),
   email: z.string(),
   amount: z.number(),
-  date: z.date(),
+  date: z.string(),
   status: z.string(),
 });
 
