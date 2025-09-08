@@ -1,4 +1,4 @@
-import { fetchAllInvoices } from "@/app/lib/data";
+import { fetchAllInvoices } from "@/lib/data";
 
 export async function GET() {
   try {

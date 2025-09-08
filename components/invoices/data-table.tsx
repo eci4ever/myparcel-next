@@ -28,8 +28,8 @@ import {
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { z } from "zod";
-import { deleteInvoiceAction, deleteInvoicesAction } from "@/app/lib/actions";
-import { formatCurrency, formatDateToLocal } from "@/app/lib/utils";
+import { deleteInvoiceAction, deleteInvoicesAction } from "@/lib/actions";
+import { formatCurrency, formatDateToLocal } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";

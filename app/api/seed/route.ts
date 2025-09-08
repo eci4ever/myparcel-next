@@ -1,11 +1,6 @@
 import bcrypt from "bcrypt";
-import sql from "@/app/lib/db";
-import {
-  customers,
-  invoices,
-  revenue,
-  users,
-} from "@/app/lib/placeholder-data";
+import sql from "@/lib/db";
+import { customers, invoices, revenue, users } from "@/lib/placeholder-data";
 
 // Seed Users
 async function _seedUsers() {

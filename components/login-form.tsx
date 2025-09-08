@@ -1,8 +1,8 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { useActionState } from "react";
-import { authenticate } from "@/app/lib/actions";
-import { cn } from "@/app/lib/utils";
+import { authenticate } from "@/lib/actions";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,

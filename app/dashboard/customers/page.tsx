@@ -1,4 +1,4 @@
-import { fetchAllCustomers } from "@/app/lib/data";
+import { fetchAllCustomers } from "@/lib/data";
 
 export default async function CustomersPage() {
   const _customers = await fetchAllCustomers();

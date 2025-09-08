@@ -8,7 +8,7 @@ import {
   IconUserCircle,
 } from "@tabler/icons-react";
 import { useTransition } from "react";
-import { logout } from "@/app/lib/actions";
+import { logout } from "@/lib/actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,

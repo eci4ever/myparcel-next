@@ -8,8 +8,8 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useActionState } from "react";
-import { type State, updateInvoice } from "@/app/lib/actions";
-import type { CustomerField, InvoiceForm } from "@/app/lib/definitions";
+import { type State, updateInvoice } from "@/lib/actions";
+import type { CustomerField, InvoiceForm } from "@/lib/definitions";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
