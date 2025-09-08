@@ -3,7 +3,6 @@ import type {
   Customer,
   CustomerField,
   CustomersTableType,
-  Invoice,
   InvoiceByIdRaw,
   InvoiceForm,
   InvoicesTable,
@@ -41,7 +40,7 @@ export async function fetchLatestInvoices() {
       ORDER BY invoices.date DESC
       LIMIT 5`;
 
-    const latestInvoices: LatestInvoice[]  = data.map((invoice) => ({
+    const latestInvoices: LatestInvoice[] = data.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
@@ -169,7 +168,6 @@ export async function fetchInvoiceById(id: string): Promise<InvoiceForm> {
     throw new Error("Failed to fetch invoice.");
   }
 }
-
 
 export async function fetchCustomers() {
   try {

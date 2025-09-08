@@ -1,4 +1,4 @@
-import postgres, { Sql } from "postgres";
+import postgres, { type Sql } from "postgres";
 
 // Define a type for our database connection
 type DatabaseConnection = Sql;
@@ -23,28 +23,30 @@ export async function getDatabaseConnection(): Promise<DatabaseConnection> {
       ...connectionOptions,
       ssl: false,
     });
-    
+
     await sqlInstance`SELECT 1`;
     console.log("Database connected without SSL");
-    
+
     return sqlInstance;
   } catch (error) {
     console.error("Connection without SSL failed:", error);
-    
+
     // Fallback to SSL connection
     try {
       sqlInstance = postgres(process.env.POSTGRES_URL!, {
         ...connectionOptions,
         ssl: "require",
       });
-      
+
       await sqlInstance`SELECT 1`;
       console.log("Database connected with SSL");
-      
+
       return sqlInstance;
     } catch (sslError) {
       console.error("Connection with SSL also failed:", sslError);
-      throw new Error("Failed to connect to database with both SSL and non-SSL options");
+      throw new Error(
+        "Failed to connect to database with both SSL and non-SSL options",
+      );
     }
   }
 }

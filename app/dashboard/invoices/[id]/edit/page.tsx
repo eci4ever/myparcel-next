@@ -13,8 +13,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     fetchInvoiceById(id),
     fetchCustomers(),
   ]);
-  console.log("Editing Invoice:", invoice);
-  console.log("Available Customers:", customers);
   return (
     <div className="px-4 lg:px-6">
       <main>
