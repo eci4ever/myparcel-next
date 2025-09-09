@@ -9,14 +9,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CheckIcon, ClockIcon, UserCircleIcon, EnvelopeIcon, PhotoIcon } from "@heroicons/react/24/outline";
+import {
+  CheckIcon,
+  ClockIcon,
+  UserCircleIcon,
+  EnvelopeIcon,
+  PhotoIcon,
+} from "@heroicons/react/24/outline";
 import { type customerState, updateCustomer } from "@/lib/actions";
 import type { Customer } from "@/lib/definitions";
 
 export default function EditCustomerForm({ customer }: { customer: Customer }) {
   const initialState: customerState = { message: null, errors: {} };
   const updateCustomerWithId = updateCustomer.bind(null, customer.id);
-  const [state, formAction] = useActionState(updateCustomerWithId, initialState);
+  const [state, formAction] = useActionState(
+    updateCustomerWithId,
+    initialState,
+  );
 
   const [preview, setPreview] = useState<string>(customer.image_url || "");
 
@@ -68,7 +77,11 @@ export default function EditCustomerForm({ customer }: { customer: Customer }) {
           </div>
 
           {/* Customer Image */}
-          <input type="hidden" name="existing_image_url" value={customer.image_url || ""} />
+          <input
+            type="hidden"
+            name="existing_image_url"
+            value={customer.image_url || ""}
+          />
           <div className="mb-6">
             <Label htmlFor="image_file">Profile Image</Label>
             <Input
@@ -105,13 +118,19 @@ export default function EditCustomerForm({ customer }: { customer: Customer }) {
                 <div className="flex gap-6">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="active" id="active" />
-                    <Label htmlFor="active" className="flex items-center gap-1.5">
+                    <Label
+                      htmlFor="active"
+                      className="flex items-center gap-1.5"
+                    >
                       Active <CheckIcon className="h-4 w-4" />
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="inactive" id="inactive" />
-                    <Label htmlFor="inactive" className="flex items-center gap-1.5">
+                    <Label
+                      htmlFor="inactive"
+                      className="flex items-center gap-1.5"
+                    >
                       Inactive <ClockIcon className="h-4 w-4" />
                     </Label>
                   </div>

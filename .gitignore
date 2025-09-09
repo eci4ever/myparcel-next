@@ -11,9 +11,7 @@
 !.yarn/versions
 
 # testing
-/coverage
-/public/customers
-/public/customer
+
 
 # next.js
 /.next/

@@ -30,7 +30,6 @@ export async function fetchRevenue() {
     throw new Error("Failed to fetch revenue data.");
   }
 }
-
 export async function fetchLatestInvoices() {
   try {
     const data = await sql<LatestInvoiceRaw[]>`
@@ -50,7 +49,6 @@ export async function fetchLatestInvoices() {
     throw new Error("Failed to fetch the latest invoices.");
   }
 }
-
 export async function fetchCardData() {
   try {
     // You can probably combine these into a single SQL query
@@ -85,7 +83,6 @@ export async function fetchCardData() {
     throw new Error("Failed to fetch card data.");
   }
 }
-
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
   query: string,
@@ -121,7 +118,6 @@ export async function fetchFilteredInvoices(
     throw new Error("Failed to fetch invoices.");
   }
 }
-
 export async function fetchInvoicesPages(query: string) {
   try {
     const data = await sql`SELECT COUNT(*)
@@ -142,7 +138,6 @@ export async function fetchInvoicesPages(query: string) {
     throw new Error("Failed to fetch total number of invoices.");
   }
 }
-
 export async function fetchInvoiceById(id: string): Promise<InvoiceForm> {
   try {
     const data = await sql<InvoiceByIdRaw[]>`
@@ -168,7 +163,6 @@ export async function fetchInvoiceById(id: string): Promise<InvoiceForm> {
     throw new Error("Failed to fetch invoice.");
   }
 }
-
 export async function fetchCustomers() {
   try {
     const customers = await sql<CustomerField[]>`
@@ -185,7 +179,6 @@ export async function fetchCustomers() {
     throw new Error("Failed to fetch all customers.");
   }
 }
-
 export async function fetchCustomerById(id: string): Promise<Customer> {
   try {
     const customer = await sql<Customer[]>`
@@ -205,7 +198,6 @@ export async function fetchCustomerById(id: string): Promise<Customer> {
     throw new Error("Failed to fetch all customers.");
   }
 }
-
 export async function fetchAllCustomers() {
   try {
     const customers = await sql<Customer[]>`
@@ -225,7 +217,6 @@ export async function fetchAllCustomers() {
     throw new Error("Failed to fetch all customers.");
   }
 }
-
 export async function fetchFilteredCustomers(query: string) {
   try {
     const data = await sql<CustomersTableType[]>`
@@ -258,7 +249,6 @@ export async function fetchFilteredCustomers(query: string) {
     throw new Error("Failed to fetch customer table.");
   }
 }
-
 export async function fetchAllInvoices() {
   try {
     const invoices = await sql<InvoicesTable[]>`
@@ -282,3 +272,24 @@ export async function fetchAllInvoices() {
     throw new Error("Failed to fetch invoices.");
   }
 }
+export async function fetchAllUsers() {
+  try {
+    const users = await sql`SELECT id, name, email FROM users`;
+
+    return users;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch users.");
+  }
+}
+export async function fetchUserById(id: string) {
+  try {
+    const user = await sql`SELECT id, name, email FROM users WHERE id = ${id}`;
+
+    return user[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch user.");
+  }
+}
+
