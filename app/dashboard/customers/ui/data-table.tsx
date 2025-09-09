@@ -84,9 +84,7 @@ const deleteCustomers = async (ids: string[]) => {
   };
 };
 
-const columns = (
-  handleDelete: (id: string) => void,
-): ColumnDef<z.infer<typeof schema>>[] => [
+const columns = (handleDelete: (id: string) => void): ColumnDef<z.infer<typeof schema>>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -131,17 +129,13 @@ const columns = (
   {
     accessorKey: "name",
     header: "Customer",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("name")}</div>
-    ),
+    cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
     enableHiding: false,
   },
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => (
-      <div className="text-muted-foreground">{row.getValue("email")}</div>
-    ),
+    cell: ({ row }) => <div className="text-muted-foreground">{row.getValue("email")}</div>,
   },
   {
     accessorKey: "status",
@@ -193,18 +187,11 @@ const columns = (
   },
 ];
 
-export function DataTable({
-  data: initialData,
-}: {
-  data: z.infer<typeof schema>[];
-}) {
+export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -229,9 +216,7 @@ export function DataTable({
       const result = await deleteCustomer(id);
 
       if (result.success) {
-        setData((prevData) =>
-          prevData.filter((customer) => customer.id !== id),
-        );
+        setData((prevData) => prevData.filter((customer) => customer.id !== id));
         setDeleteStatus({ success: true, message: result.message });
       } else {
         setDeleteStatus({
@@ -244,9 +229,7 @@ export function DataTable({
       setDeleteStatus({
         success: false,
         message:
-          error instanceof Error
-            ? error.message
-            : "An error occurred while deleting the customer",
+          error instanceof Error ? error.message : "An error occurred while deleting the customer",
       });
     } finally {
       setIsDeleting(false);
@@ -267,11 +250,7 @@ export function DataTable({
       return;
     }
 
-    if (
-      !confirm(
-        `Are you sure you want to delete ${selectedRowIds.length} customer(s)?`,
-      )
-    ) {
+    if (!confirm(`Are you sure you want to delete ${selectedRowIds.length} customer(s)?`)) {
       return;
     }
 
@@ -282,9 +261,7 @@ export function DataTable({
       const result = await deleteCustomers(selectedRowIds);
 
       if (result.success) {
-        setData((prevData) =>
-          prevData.filter((customer) => !selectedRowIds.includes(customer.id)),
-        );
+        setData((prevData) => prevData.filter((customer) => !selectedRowIds.includes(customer.id)));
         setRowSelection({});
         setDeleteStatus({ success: true, message: result.message });
       } else {
@@ -298,9 +275,7 @@ export function DataTable({
       setDeleteStatus({
         success: false,
         message:
-          error instanceof Error
-            ? error.message
-            : "An error occurred while deleting the customers",
+          error instanceof Error ? error.message : "An error occurred while deleting the customers",
       });
     } finally {
       setIsDeleting(false);
@@ -336,17 +311,12 @@ export function DataTable({
   const selectedCount = Object.keys(rowSelection).length;
 
   return (
-    <Tabs
-      defaultValue="outline"
-      className="w-full flex-col justify-start gap-6"
-    >
+    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <Input
           placeholder="Filter by email..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
+          onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
           className="w-full lg:w-96 bg-neutral-50 text-neutral-900 border-neutral-200 placeholder:text-neutral-400 focus:border-neutral-400 focus:ring-neutral-200"
         />
 
@@ -371,9 +341,7 @@ export function DataTable({
 
       {/* Status Message */}
       {deleteStatus && (
-        <div
-          className={`px-4 lg:px-6 ${deleteStatus.success ? "text-green-600" : "text-red-600"}`}
-        >
+        <div className={`px-4 lg:px-6 ${deleteStatus.success ? "text-green-600" : "text-red-600"}`}>
           {deleteStatus.message}
         </div>
       )}
@@ -401,10 +369,7 @@ export function DataTable({
                       <TableHead key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder
                           ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
+                          : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     );
                   })}
@@ -421,20 +386,14 @@ export function DataTable({
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
                     No results.
                   </TableCell>
                 </TableRow>
@@ -460,9 +419,7 @@ export function DataTable({
                 }}
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                  <SelectValue
-                    placeholder={table.getState().pagination.pageSize}
-                  />
+                  <SelectValue placeholder={table.getState().pagination.pageSize} />
                 </SelectTrigger>
                 <SelectContent side="top">
                   {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -474,8 +431,7 @@ export function DataTable({
               </Select>
             </div>
             <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
+              Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
@@ -522,19 +478,13 @@ export function DataTable({
         </div>
       </TabsContent>
 
-      <TabsContent
-        value="past-performance"
-        className="flex flex-col px-4 lg:px-6"
-      >
+      <TabsContent value="past-performance" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
       <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
-      <TabsContent
-        value="focus-documents"
-        className="flex flex-col px-4 lg:px-6"
-      >
+      <TabsContent value="focus-documents" className="flex flex-col px-4 lg:px-6">
         <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
       </TabsContent>
     </Tabs>

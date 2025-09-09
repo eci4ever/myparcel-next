@@ -68,9 +68,7 @@ export const schema = z.object({
   status: z.string(),
 });
 
-const columns = (
-  handleDelete: (id: string) => void,
-): ColumnDef<z.infer<typeof schema>>[] => [
+const columns = (handleDelete: (id: string) => void): ColumnDef<z.infer<typeof schema>>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -153,9 +151,7 @@ const columns = (
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem
-              onClick={() => router.push(`/dashboard/invoices/${id}/edit`)}
-            >
+            <DropdownMenuItem onClick={() => router.push(`/dashboard/invoices/${id}/edit`)}>
               Edit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -173,23 +169,14 @@ const columns = (
   },
 ];
 
-export function DataTable({
-  data: initialData,
-}: {
-  data: z.infer<typeof schema>[];
-}) {
+export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[] }) {
   const [data, setData] = React.useState(() => {
     // Sort initial data by date in descending order (newest first)
-    return [...initialData].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
+    return [...initialData].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   });
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([
     // Set initial sorting to date descending
     { id: "date", desc: true },
@@ -216,9 +203,7 @@ export function DataTable({
 
       if (result.success) {
         // Update the local state to remove the deleted invoice
-        setData((prevData) =>
-          prevData.filter((invoice) => invoice.id.toString() !== id),
-        );
+        setData((prevData) => prevData.filter((invoice) => invoice.id.toString() !== id));
         setDeleteStatus({ success: true, message: result.message });
       } else {
         setDeleteStatus({
@@ -231,9 +216,7 @@ export function DataTable({
       setDeleteStatus({
         success: false,
         message:
-          error instanceof Error
-            ? error.message
-            : "An error occurred while deleting the invoice",
+          error instanceof Error ? error.message : "An error occurred while deleting the invoice",
       });
     } finally {
       setIsDeleting(false);
@@ -268,9 +251,7 @@ export function DataTable({
       if (result.success) {
         // Update the local state to remove the deleted invoices
         setData((prevData) =>
-          prevData.filter(
-            (invoice) => !selectedRowIds.includes(invoice.id.toString()),
-          ),
+          prevData.filter((invoice) => !selectedRowIds.includes(invoice.id.toString())),
         );
         // Clear selection
         setRowSelection({});
@@ -286,9 +267,7 @@ export function DataTable({
       setDeleteStatus({
         success: false,
         message:
-          error instanceof Error
-            ? error.message
-            : "An error occurred while deleting the invoices",
+          error instanceof Error ? error.message : "An error occurred while deleting the invoices",
       });
     } finally {
       setIsDeleting(false);
@@ -301,16 +280,13 @@ export function DataTable({
   };
 
   // Function to add new invoice to the table
-  const addNewInvoice = React.useCallback(
-    (newInvoice: z.infer<typeof schema>) => {
-      // Add new invoice at the beginning of the array
-      setData((prevData) => [newInvoice, ...prevData]);
+  const addNewInvoice = React.useCallback((newInvoice: z.infer<typeof schema>) => {
+    // Add new invoice at the beginning of the array
+    setData((prevData) => [newInvoice, ...prevData]);
 
-      // Reset to first page to show the new record
-      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-    },
-    [],
-  );
+    // Reset to first page to show the new record
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, []);
 
   // Listen for new invoice events
   React.useEffect(() => {
@@ -322,10 +298,7 @@ export function DataTable({
     window.addEventListener("newInvoice", handleNewInvoice as EventListener);
 
     return () => {
-      window.removeEventListener(
-        "newInvoice",
-        handleNewInvoice as EventListener,
-      );
+      window.removeEventListener("newInvoice", handleNewInvoice as EventListener);
     };
   }, [addNewInvoice]);
 
@@ -357,18 +330,13 @@ export function DataTable({
   const selectedCount = Object.keys(rowSelection).length;
 
   return (
-    <Tabs
-      defaultValue="outline"
-      className="w-full flex-col justify-start gap-6"
-    >
+    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-4">
           <Input
             placeholder="Filter by email..."
             value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("email")?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
             className="w-full lg:w-96"
           />
         </div>
@@ -397,9 +365,7 @@ export function DataTable({
 
       {/* Status Message */}
       {deleteStatus && (
-        <div
-          className={`px-4 lg:px-6 ${deleteStatus.success ? "text-green-600" : "text-red-600"}`}
-        >
+        <div className={`px-4 lg:px-6 ${deleteStatus.success ? "text-green-600" : "text-red-600"}`}>
           {deleteStatus.message}
         </div>
       )}
@@ -425,10 +391,7 @@ export function DataTable({
                     <TableHead key={header.id} colSpan={header.colSpan}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -444,20 +407,14 @@ export function DataTable({
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
                     No results.
                   </TableCell>
                 </TableRow>
@@ -482,9 +439,7 @@ export function DataTable({
                 }}
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                  <SelectValue
-                    placeholder={table.getState().pagination.pageSize}
-                  />
+                  <SelectValue placeholder={table.getState().pagination.pageSize} />
                 </SelectTrigger>
                 <SelectContent side="top">
                   {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -496,8 +451,7 @@ export function DataTable({
               </Select>
             </div>
             <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
+              Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button

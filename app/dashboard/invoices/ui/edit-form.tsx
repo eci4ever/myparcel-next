@@ -104,14 +104,8 @@ export default function EditInvoiceForm({
 
           {/* Invoice Status */}
           <div className="mb-6">
-            <Label className="text-sm font-medium">
-              Set the invoice status
-            </Label>
-            <RadioGroup
-              name="status"
-              defaultValue={invoice.status}
-              className="mt-2"
-            >
+            <Label className="text-sm font-medium">Set the invoice status</Label>
+            <RadioGroup name="status" defaultValue={invoice.status} className="mt-2">
               <Card className="p-4">
                 <div className="flex gap-6">
                   <div className="flex items-center space-x-2">

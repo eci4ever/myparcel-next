@@ -22,10 +22,7 @@ import type { Customer } from "@/lib/definitions";
 export default function EditCustomerForm({ customer }: { customer: Customer }) {
   const initialState: customerState = { message: null, errors: {} };
   const updateCustomerWithId = updateCustomer.bind(null, customer.id);
-  const [state, formAction] = useActionState(
-    updateCustomerWithId,
-    initialState,
-  );
+  const [state, formAction] = useActionState(updateCustomerWithId, initialState);
 
   const [preview, setPreview] = useState<string>(customer.image_url || "");
 
@@ -77,11 +74,7 @@ export default function EditCustomerForm({ customer }: { customer: Customer }) {
           </div>
 
           {/* Customer Image */}
-          <input
-            type="hidden"
-            name="existing_image_url"
-            value={customer.image_url || ""}
-          />
+          <input type="hidden" name="existing_image_url" value={customer.image_url || ""} />
           <div className="mb-6">
             <Label htmlFor="image_file">Profile Image</Label>
             <Input
@@ -109,28 +102,18 @@ export default function EditCustomerForm({ customer }: { customer: Customer }) {
           {/* Customer Status */}
           <div className="mb-6">
             <Label>Customer Status</Label>
-            <RadioGroup
-              name="status"
-              defaultValue={customer.status || "active"}
-              className="mt-2"
-            >
+            <RadioGroup name="status" defaultValue={customer.status || "active"} className="mt-2">
               <Card className="p-4">
                 <div className="flex gap-6">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="active" id="active" />
-                    <Label
-                      htmlFor="active"
-                      className="flex items-center gap-1.5"
-                    >
+                    <Label htmlFor="active" className="flex items-center gap-1.5">
                       Active <CheckIcon className="h-4 w-4" />
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="inactive" id="inactive" />
-                    <Label
-                      htmlFor="inactive"
-                      className="flex items-center gap-1.5"
-                    >
+                    <Label htmlFor="inactive" className="flex items-center gap-1.5">
                       Inactive <ClockIcon className="h-4 w-4" />
                     </Label>
                   </div>
@@ -140,9 +123,7 @@ export default function EditCustomerForm({ customer }: { customer: Customer }) {
           </div>
 
           {/* General error message */}
-          {state.message && (
-            <p className="my-2 text-sm text-destructive">{state.message}</p>
-          )}
+          {state.message && <p className="my-2 text-sm text-destructive">{state.message}</p>}
         </CardContent>
       </Card>
 

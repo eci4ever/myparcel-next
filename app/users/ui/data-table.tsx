@@ -43,9 +43,7 @@ const columns: ColumnDef<DataUser>[] = [
 ];
 
 export function DataTableDemo({ data }: { data: DataUser[] }) {
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const table = useReactTable({
     data,
     columns,
@@ -66,9 +64,7 @@ export function DataTableDemo({ data }: { data: DataUser[] }) {
         <Input
           placeholder="Search name..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
+          onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
       </div>
@@ -82,10 +78,7 @@ export function DataTableDemo({ data }: { data: DataUser[] }) {
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
               ))}
             </TableRow>

@@ -87,9 +87,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
 
           {/* Invoice Status */}
           <div className="mb-6">
-            <Label className="text-sm font-medium">
-              Set the invoice status
-            </Label>
+            <Label className="text-sm font-medium">Set the invoice status</Label>
             <RadioGroup name="status" className="mt-2">
               <div className="flex items-center space-x-6">
                 <div className="flex items-center space-x-2">

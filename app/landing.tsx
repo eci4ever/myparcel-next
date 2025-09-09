@@ -11,11 +11,7 @@ export default function Landing() {
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <header className="px-4 lg:px-6 h-14 flex items-center bg-gray-100">
-        <Link
-          href="#"
-          className="flex items-center justify-center"
-          prefetch={false}
-        >
+        <Link href="#" className="flex items-center justify-center" prefetch={false}>
           <MountainIcon className="h-6 w-6" />
           <span className="sr-only">Acme Inc</span>
         </Link>
@@ -60,8 +56,8 @@ export default function Landing() {
                     The complete solution for delivering your Parcels
                   </h1>
                   <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
-                    My Parcel System is a comprehensive platform designed to
-                    streamline the process of managing and delivering parcels.
+                    My Parcel System is a comprehensive platform designed to streamline the process
+                    of managing and delivering parcels.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -95,36 +91,32 @@ export default function Landing() {
                   Faster iteration. More innovation.
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  With a focus on innovation and scalability, the system ensures
-                  secure, reliable, and fast delivery experiences for customers.
+                  With a focus on innovation and scalability, the system ensures secure, reliable,
+                  and fast delivery experiences for customers.
                 </p>
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
               <div className="grid gap-1">
                 <InfinityIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
-                <h3 className="text-lg font-bold">
-                  Automated Parcel Management
-                </h3>
+                <h3 className="text-lg font-bold">Automated Parcel Management</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Simplify the process of creating, organizing, and managing
-                  shipments
+                  Simplify the process of creating, organizing, and managing shipments
                 </p>
               </div>
               <div className="grid gap-1">
                 <InfoIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
                 <h3 className="text-lg font-bold">Real-Time Tracking</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Keep customers informed with live updates on parcel locations
-                  and delivery statuses.
+                  Keep customers informed with live updates on parcel locations and delivery
+                  statuses.
                 </p>
               </div>
               <div className="grid gap-1">
                 <UserPlusIcon className="h-8 w-8 text-gray-900 dark:text-gray-50" />
                 <h3 className="text-lg font-bold">Secure and Reliable</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Ensure the safety of customer data and the reliability of
-                  deliveries.
+                  Ensure the safety of customer data and the reliability of deliveries.
                 </p>
               </div>
             </div>
@@ -137,9 +129,8 @@ export default function Landing() {
                 Experience the workflow the best frontend teams love.
               </h2>
               <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                It provides businesses and individuals with the tools they need
-                to efficiently handle shipping, tracking, and delivery
-                operations.
+                It provides businesses and individuals with the tools they need to efficiently
+                handle shipping, tracking, and delivery operations.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row lg:justify-end">
@@ -159,18 +150,10 @@ export default function Landing() {
           &copy; 2025 Eci Inc. All rights reserved.
         </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link
-            href="#"
-            className="text-xs hover:underline underline-offset-4"
-            prefetch={false}
-          >
+          <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
             Terms of Service
           </Link>
-          <Link
-            href="#"
-            className="text-xs hover:underline underline-offset-4"
-            prefetch={false}
-          >
+          <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
             Privacy
           </Link>
         </nav>
