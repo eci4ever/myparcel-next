@@ -1,5 +1,13 @@
 "use client";
-
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
+  IconDotsVertical,
+  IconPlus,
+  IconTrash,
+} from "@tabler/icons-react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -14,10 +22,11 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
+import Image from "next/image";
 import * as React from "react";
 import { z } from "zod";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +34,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -44,15 +52,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
-  IconDotsVertical,
-  IconPlus,
-  IconTrash,
-} from "@tabler/icons-react";
 import { deleteCustomerAction, deleteCustomersAction } from "@/lib/actions";
 
 export const schema = z.object({
@@ -74,7 +73,10 @@ const deleteCustomers = async (ids: string[]) => {
   // Simulate API call
   // await new Promise(resolve => setTimeout(resolve, 800));
   await deleteCustomersAction(ids); // Modify this to handle multiple deletions in your actual implementation
-  return { success: true, message: `${ids.length} customers deleted successfully` };
+  return {
+    success: true,
+    message: `${ids.length} customers deleted successfully`,
+  };
 };
 
 const columns = (
@@ -110,7 +112,7 @@ const columns = (
     accessorKey: "image_url",
     header: "Avatar",
     cell: ({ row }) => (
-      <img
+      <Image
         src={row.getValue("image_url")}
         alt={row.getValue("name")}
         className="h-10 w-10 mx-6 rounded-full object-cover"
@@ -122,19 +124,23 @@ const columns = (
   {
     accessorKey: "name",
     header: "Customer",
-    cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
+    cell: ({ row }) => (
+      <div className="font-medium">{row.getValue("name")}</div>
+    ),
     enableHiding: false,
   },
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => <div className="text-muted-foreground">{row.getValue("email")}</div>,
+    cell: ({ row }) => (
+      <div className="text-muted-foreground">{row.getValue("email")}</div>
+    ),
   },
   {
     id: "actions",
     cell: ({ row }) => {
       const id = row.original.id;
-      
+
       return (
         <div className="flex justify-end">
           <DropdownMenu>
@@ -151,7 +157,7 @@ const columns = (
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem>Edit</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 variant="destructive"
                 onClick={() => handleDelete(id)}
                 className="cursor-pointer"
@@ -175,7 +181,9 @@ export function DataTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -197,16 +205,24 @@ export function DataTable({
 
       if (result.success) {
         // Update the local state to remove the deleted customer
-        setData(prevData => prevData.filter(customer => customer.id !== id));
+        setData((prevData) =>
+          prevData.filter((customer) => customer.id !== id),
+        );
         setDeleteStatus({ success: true, message: result.message });
       } else {
-        setDeleteStatus({ success: false, message: result.message || "Failed to delete customer" });
+        setDeleteStatus({
+          success: false,
+          message: result.message || "Failed to delete customer",
+        });
       }
     } catch (error) {
       console.error("Failed to delete customer:", error);
       setDeleteStatus({
         success: false,
-        message: error instanceof Error ? error.message : "An error occurred while deleting the customer",
+        message:
+          error instanceof Error
+            ? error.message
+            : "An error occurred while deleting the customer",
       });
     } finally {
       setIsDeleting(false);
@@ -217,9 +233,12 @@ export function DataTable({
   // Function to handle multiple customer deletion
   const handleDeleteMultiple = async () => {
     const selectedRowIds = Object.keys(rowSelection);
-    
+
     if (selectedRowIds.length === 0) {
-      setDeleteStatus({ success: false, message: "Please select at least one customer to delete" });
+      setDeleteStatus({
+        success: false,
+        message: "Please select at least one customer to delete",
+      });
       setTimeout(() => setDeleteStatus(null), 3000);
       return;
     }
@@ -232,18 +251,26 @@ export function DataTable({
 
       if (result.success) {
         // Update the local state to remove the deleted customers
-        setData(prevData => prevData.filter(customer => !selectedRowIds.includes(customer.id)));
+        setData((prevData) =>
+          prevData.filter((customer) => !selectedRowIds.includes(customer.id)),
+        );
         // Clear selection
         setRowSelection({});
         setDeleteStatus({ success: true, message: result.message });
       } else {
-        setDeleteStatus({ success: false, message: result.message || "Failed to delete customers" });
+        setDeleteStatus({
+          success: false,
+          message: result.message || "Failed to delete customers",
+        });
       }
     } catch (error) {
       console.error("Failed to delete customers:", error);
       setDeleteStatus({
         success: false,
-        message: error instanceof Error ? error.message : "An error occurred while deleting the customers",
+        message:
+          error instanceof Error
+            ? error.message
+            : "An error occurred while deleting the customers",
       });
     } finally {
       setIsDeleting(false);
@@ -313,7 +340,9 @@ export function DataTable({
 
       {/* Status Message */}
       {deleteStatus && (
-        <div className={`px-4 lg:px-6 ${deleteStatus.success ? 'text-green-600' : 'text-red-600'}`}>
+        <div
+          className={`px-4 lg:px-6 ${deleteStatus.success ? "text-green-600" : "text-red-600"}`}
+        >
           {deleteStatus.message}
         </div>
       )}
@@ -326,7 +355,7 @@ export function DataTable({
           <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-20">
             <div className="flex items-center gap-2 bg-background p-4 rounded-lg border">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-              <span>Deleting customer{selectedCount > 1 ? 's' : ''}...</span>
+              <span>Deleting customer{selectedCount > 1 ? "s" : ""}...</span>
             </div>
           </div>
         )}
@@ -361,7 +390,10 @@ export function DataTable({
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>

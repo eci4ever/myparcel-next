@@ -94,7 +94,7 @@ async function _seedRevenue() {
 //API Route
 export async function GET() {
   try {
-    await sql.begin(async (_tx: any) => {
+    await sql.begin(async (_tx) => {
       await _seedUsers();
       await _seedCustomers();
       await _seedInvoices();
@@ -102,8 +102,8 @@ export async function GET() {
     });
 
     return Response.json({ message: "Database seeded successfully ✅" });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: error }, { status: 500 });
   }
 }
