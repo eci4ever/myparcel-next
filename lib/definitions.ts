@@ -14,6 +14,7 @@ export type Customer = {
   name: string;
   email: string;
   image_url: string;
+  status: "active" | "inactive";
 };
 
 export type Invoice = {

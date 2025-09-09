@@ -36,6 +36,7 @@ async function _seedCustomers() {
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL,
       image_url VARCHAR(255) NOT NULL,
+      status VARCHAR(50) NOT NULL DEFAULT 'active',
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
   `;

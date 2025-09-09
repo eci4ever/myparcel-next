@@ -5,8 +5,12 @@ import {
   IconChevronsLeft,
   IconChevronsRight,
   IconDotsVertical,
+  IconCircleCheckFilled,
+  IconLoader,
   IconPlus,
   IconTrash,
+  IconEdit, // Add Edit icon
+  IconPencil, // Alternative edit icon
 } from "@tabler/icons-react";
 import {
   type ColumnDef,
@@ -53,26 +57,27 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { deleteCustomerAction, deleteCustomersAction } from "@/lib/actions";
+import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 
 export const schema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string(),
   image_url: z.string(),
+  status: z.string(),
 });
 
 // Mock delete functions - replace with your actual API calls
 const deleteCustomer = async (id: string) => {
   // Simulate API call
   await deleteCustomerAction(id);
-  // await new Promise(resolve => setTimeout(resolve, 500));
   return { success: true, message: "Customer deleted successfully" };
 };
 
 const deleteCustomers = async (ids: string[]) => {
   // Simulate API call
-  // await new Promise(resolve => setTimeout(resolve, 800));
-  await deleteCustomersAction(ids); // Modify this to handle multiple deletions in your actual implementation
+  await deleteCustomersAction(ids);
   return {
     success: true,
     message: `${ids.length} customers deleted successfully`,
@@ -115,6 +120,8 @@ const columns = (
       <Image
         src={row.getValue("image_url")}
         alt={row.getValue("name")}
+        width={40}
+        height={40}
         className="h-10 w-10 mx-6 rounded-full object-cover"
       />
     ),
@@ -137,35 +144,49 @@ const columns = (
     ),
   },
   {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => (
+      <Badge variant="outline" className="text-muted-foreground px-1.5">
+        {row.original.status === "active" ? (
+          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+        ) : (
+          <IconLoader />
+        )}
+        {row.original.status}
+      </Badge>
+    ),
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
       const id = row.original.id;
+      const router = useRouter();
 
       return (
-        <div className="flex justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-                size="icon"
-              >
-                <IconDotsVertical />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => handleDelete(id)}
-                className="cursor-pointer"
-              >
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="flex justify-end gap-1">
+          {" "}
+          {/* Changed to gap for icon buttons */}
+          {/* Edit Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-neutral-700 hover:text-neutral-900 hover:bg-neutral-200"
+            onClick={() => router.push(`/dashboard/customers/${id}/edit`)}
+            title="Edit customer"
+          >
+            <IconPencil size={16} />
+          </Button>
+          {/* Delete Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-neutral-700 hover:text-red-700 hover:bg-neutral-200"
+            onClick={() => handleDelete(id)}
+            title="Delete customer"
+          >
+            <IconTrash size={16} />
+          </Button>
         </div>
       );
     },
@@ -197,6 +218,10 @@ export function DataTable({
 
   // Function to handle single customer deletion
   const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this customer?")) {
+      return;
+    }
+
     setIsDeleting(true);
     setDeleteStatus(null);
 
@@ -204,7 +229,6 @@ export function DataTable({
       const result = await deleteCustomer(id);
 
       if (result.success) {
-        // Update the local state to remove the deleted customer
         setData((prevData) =>
           prevData.filter((customer) => customer.id !== id),
         );
@@ -243,6 +267,14 @@ export function DataTable({
       return;
     }
 
+    if (
+      !confirm(
+        `Are you sure you want to delete ${selectedRowIds.length} customer(s)?`,
+      )
+    ) {
+      return;
+    }
+
     setIsDeleting(true);
     setDeleteStatus(null);
 
@@ -250,11 +282,9 @@ export function DataTable({
       const result = await deleteCustomers(selectedRowIds);
 
       if (result.success) {
-        // Update the local state to remove the deleted customers
         setData((prevData) =>
           prevData.filter((customer) => !selectedRowIds.includes(customer.id)),
         );
-        // Clear selection
         setRowSelection({});
         setDeleteStatus({ success: true, message: result.message });
       } else {
@@ -317,8 +347,9 @@ export function DataTable({
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
-          className="w-full lg:w-96"
+          className="w-full lg:w-96 bg-neutral-50 text-neutral-900 border-neutral-200 placeholder:text-neutral-400 focus:border-neutral-400 focus:ring-neutral-200"
         />
+
         <div className="flex items-center gap-2">
           {selectedCount > 0 && (
             <Button

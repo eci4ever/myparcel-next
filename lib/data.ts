@@ -186,6 +186,26 @@ export async function fetchCustomers() {
   }
 }
 
+export async function fetchCustomerById(id: string): Promise<Customer> {
+  try {
+    const customer = await sql<Customer[]>`
+      SELECT
+        id,
+        name,
+        email,
+        image_url, 
+        status
+      FROM customers
+      WHERE id = ${id}
+    `;
+
+    return customer[0];
+  } catch (err) {
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch all customers.");
+  }
+}
+
 export async function fetchAllCustomers() {
   try {
     const customers = await sql<Customer[]>`
@@ -193,7 +213,8 @@ export async function fetchAllCustomers() {
         id,
         name,
         email,
-        image_url
+        image_url,
+        status
       FROM customers
       ORDER BY name ASC
     `;
