@@ -1,57 +1,31 @@
 import postgres, { type Sql } from "postgres";
 
-// Define a type for our database connection
-type DatabaseConnection = Sql;
+declare global {
+  // supaya singleton boleh guna di dev tanpa duplicate
+  var sqlInstance: Sql | undefined;
+}
 
-// Create a singleton database instance
-let sqlInstance: DatabaseConnection | null = null;
-
-export async function getDatabaseConnection(): Promise<DatabaseConnection> {
-  if (sqlInstance) {
-    return sqlInstance;
-  }
+export function getDatabaseConnection(): Sql {
+  if (global.sqlInstance) return global.sqlInstance;
 
   const connectionOptions = {
     idle_timeout: 20,
     max_lifetime: 60 * 30,
-    max: 10, // Maximum number of connections in the pool
+    max: 10, // Maximum pool size
   };
 
-  try {
-    // First try without SSL
-    sqlInstance = postgres(process.env.POSTGRES_URL_NO_SSL!, {
-      ...connectionOptions,
-      ssl: false,
-    });
+  const isProduction = process.env.NODE_ENV === "production";
 
-    await sqlInstance`SELECT 1`;
-    console.log("Database connected without SSL");
+  const sql = postgres(process.env.DATABASE_URL!, {
+    ...connectionOptions,
+    ssl: isProduction ? "require" : false,
+  });
 
-    return sqlInstance;
-  } catch (error) {
-    console.error("Connection without SSL failed:", error);
+  if (!isProduction) global.sqlInstance = sql;
 
-    // Fallback to SSL connection
-    try {
-      sqlInstance = postgres(process.env.POSTGRES_URL!, {
-        ...connectionOptions,
-        ssl: "require",
-      });
-
-      await sqlInstance`SELECT 1`;
-      console.log("Database connected with SSL");
-
-      return sqlInstance;
-    } catch (sslError) {
-      console.error("Connection with SSL also failed:", sslError);
-      throw new Error(
-        "Failed to connect to database with both SSL and non-SSL options",
-      );
-    }
-  }
+  return sql;
 }
 
-// Initialize the connection when the module is imported
-const sql = await getDatabaseConnection();
-
+// Default export (boleh terus import sql dari mana-mana file)
+const sql = getDatabaseConnection();
 export default sql;
