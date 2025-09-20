@@ -86,7 +86,7 @@ export async function fetchCardData() {
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
   query: string,
-  currentPage: number,
+  currentPage: number
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -293,3 +293,35 @@ export async function fetchUserById(id: string) {
   }
 }
 
+export async function insertInvoice(
+  customerId: string,
+  amount: number,
+  status: string,
+  date: string
+) {
+  return sql`
+    INSERT INTO invoices (customer_id, amount, status, date)
+    VALUES (${customerId}, ${amount}, ${status}, ${date})
+  `;
+}
+
+export async function updateInvoiceById(
+  id: string,
+  customerId: string,
+  amount: number,
+  status: string
+) {
+  return sql`
+    UPDATE invoices
+    SET customer_id = ${customerId}, amount = ${amount}, status = ${status}
+    WHERE id = ${id}
+  `;
+}
+
+export async function deleteInvoiceById(id: string) {
+  return sql`DELETE FROM invoices WHERE id = ${id}`;
+}
+
+export async function deleteInvoicesByIds(ids: string[]) {
+  return sql`DELETE FROM invoices WHERE id = ANY(${ids})`;
+}
