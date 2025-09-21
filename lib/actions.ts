@@ -31,7 +31,7 @@ export async function authenticate(
 }
 
 export async function logout() {
-  await signOut({ redirectTo: "/" });
+  await signOut({ redirectTo: "/", redirect: true });
 }
 
 const SignUpSchema = z.object({
@@ -74,7 +74,7 @@ export async function signUpUser(formData: FormData) {
     redirect: true,
   });
 
-  return { success: true, message: "User created" };
+  return { success: true };
 }
 
 const FormSchema = z.object({
