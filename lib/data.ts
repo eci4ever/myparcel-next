@@ -24,6 +24,36 @@ export async function getUser(email: string): Promise<User | undefined> {
     throw new Error("Database query failed.");
   }
 }
+export async function createUser(
+  name: string,
+  email: string,
+  hashedPassword: string
+) {
+  try {
+    const existingUser = await sql<User[]>`
+      SELECT * FROM users WHERE email = ${email}
+    `;
+
+    if (existingUser.length > 0) {
+      return {
+        success: false,
+        error: { email: ["User with this email already exists."] },
+      };
+      // throw new Error("User with this email already exists.");
+    }
+
+    const newUser = await sql`
+      INSERT INTO users (name, email, password)
+      VALUES (${name}, ${email}, ${hashedPassword})
+      RETURNING *
+    `;
+
+    return newUser[0];
+  } catch (error) {
+    console.error("Failed to create user:", error);
+    throw new Error("Database operation failed.");
+  }
+}
 export async function fetchUserById(id: string) {
   try {
     const user = await sql`SELECT id, name, email FROM users WHERE id = ${id}`;

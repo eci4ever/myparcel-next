@@ -38,7 +38,7 @@ export default function Landing() {
             Dashboard
           </Link>
           <Link
-            href="/login"
+            href="/signin"
             className="text-sm font-medium hover:underline underline-offset-4"
             prefetch={false}
           >

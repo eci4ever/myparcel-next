@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { z } from "zod";
+import bcrypt from "bcrypt";
 import { signIn, signOut } from "@/lib/auth";
 import {
   insertInvoice,
   updateInvoiceById,
   deleteInvoiceById,
   deleteInvoicesByIds,
+  createUser,
 } from "./data";
 
 export async function authenticate(
@@ -39,8 +41,6 @@ const SignUpSchema = z.object({
 });
 
 export async function signUpUser(formData: FormData) {
-  console.log("FormData received in action:", formData);
-
   const parsed = SignUpSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -56,10 +56,25 @@ export async function signUpUser(formData: FormData) {
 
   const { name, email, password } = parsed.data;
 
-  // Simulate user registration logic here
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  return { success: "Registering", error: null };
+  // Simulate user registration logic here
+
+  // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  const newUser = await createUser(name, email, hashedPassword);
+  console.log(newUser.error);
+  if (newUser.error) {
+    return { success: false, error: newUser.error };
+  }
+
+  await signIn("credentials", {
+    email,
+    password,
+    redirect: true,
+  });
+
+  return { success: true, error: null };
 }
 
 const FormSchema = z.object({

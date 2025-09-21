@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useTransition } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,46 +9,37 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Eye, EyeOff } from "lucide-react"
-import { signUpUser } from "@/lib/actions"
 import { useRouter } from "next/navigation"
-import { start } from "repl"
+import { authenticate } from "@/lib/actions"
 
-export function SignUpForm() {
+export function SignInForm() {
     const router = useRouter()
     const [showPassword, setShowPassword] = useState(false)
-    const [isPending, startTransition] = useTransition()
     const [formData, setFormData] = useState({
-        name: "",
         email: "",
         password: "",
     })
-    const [errors, setErrors] = useState<{ [key: string]: string[] }>({})
+    const [errors, setErrors] = useState("")
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         // Handle form submission here
 
         const fd = new FormData()
-        fd.append("name", formData.name)
         fd.append("email", formData.email)
         fd.append("password", formData.password)
 
+        // console.log(Object.fromEntries(fd.entries()))
+        const result = await authenticate("credentials", fd)
 
-        startTransition(async () => {
-            const result = await signUpUser(fd)
-            if (result?.error) {
-                setErrors(result.error)
-                console.log(result.error)
-            } else {
-                console.log(result.success)
-            }
-        })
-
+        if (result) {
+            setErrors(result)
+        }
     }
 
-    const handleGoogleSignUp = () => {
+    const handleGoogleSignIn = () => {
         // Handle Google OAuth here
-        console.log("Google sign up clicked")
+        console.log("Google sign in clicked")
     }
 
     return (
@@ -66,14 +56,14 @@ export function SignUpForm() {
 
             <Card className="border-border shadow-lg">
                 <CardHeader className="space-y-1 text-center">
-                    <CardTitle className="text-2xl font-bold text-balance">Create your account</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-balance">Welcome.</CardTitle>
                     <CardDescription className="text-muted-foreground text-pretty">
-                        Enter your details below to create your account
+                        Enter your credentials to sign in to your account
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {/* Google Sign Up Button */}
-                    <Button variant="outline" className="w-full bg-transparent" onClick={handleGoogleSignUp} type="button">
+                    {/* Google Sign In Button */}
+                    <Button variant="outline" className="w-full bg-transparent" onClick={handleGoogleSignIn} type="button">
                         <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                             <path
                                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -92,7 +82,7 @@ export function SignUpForm() {
                                 fill="#EA4335"
                             />
                         </svg>
-                        Sign up with Google
+                        Sign in with Google
                     </Button>
 
                     <div className="relative">
@@ -104,43 +94,33 @@ export function SignUpForm() {
                         </div>
                     </div>
 
-                    {/* Sign Up Form */}
+                    {/* Sign In Form */}
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input
-                                id="name"
-                                type="text"
-                                placeholder="Enter your full name"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                                className="bg-input"
-                            />
-                            {errors?.name && <span className="text-red-500 text-sm">{errors.name[0]}</span>}
-                        </div>
-
                         <div className="space-y-2">
                             <Label htmlFor="email">Email Address</Label>
                             <Input
                                 id="email"
-                                type="text"
+                                type="email"
                                 placeholder="Enter your email"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 required
                                 className="bg-input"
                             />
-                            {errors?.email && <span className="text-red-500 text-sm">{errors.email[0]}</span>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="password">Password</Label>
+                                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                                    Forgot password?
+                                </Link>
+                            </div>
                             <div className="relative">
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
-                                    placeholder="Create a password"
+                                    placeholder="Enter your password"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     required
@@ -161,18 +141,18 @@ export function SignUpForm() {
                                     )}
                                 </Button>
                             </div>
-                            {errors?.password && <span className="text-red-500 text-sm">{errors.password[0]}</span>}
+                            {errors && <span className="text-red-500 text-sm">{errors}</span>}
                         </div>
 
-                        <Button type="submit" className="w-full" disabled={isPending} aria-disabled={isPending}>
-                            {isPending ? "Creating..." : "Create Account"}
+                        <Button type="submit" className="w-full">
+                            Sign In
                         </Button>
                     </form>
 
                     <div className="text-center text-sm text-muted-foreground">
-                        Already have an account?{" "}
-                        <Link href="/signin" className="text-primary hover:underline">
-                            Sign in
+                        Don't have an account?{" "}
+                        <Link href="/signup" className="text-primary hover:underline">
+                            Sign up
                         </Link>
                     </div>
                 </CardContent>
