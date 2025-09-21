@@ -55,9 +55,10 @@ export async function createUser(
 }
 export async function fetchUserById(id: string) {
   try {
-    const user = await sql`SELECT id, name, email FROM users WHERE id = ${id}`;
+    const user_by_id =
+      await sql`SELECT id, name, email FROM users WHERE id = ${id}`;
 
-    return user[0];
+    return user_by_id[0];
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch user.");
@@ -65,9 +66,9 @@ export async function fetchUserById(id: string) {
 }
 export async function fetchAllUsers() {
   try {
-    const users = await sql`SELECT id, name, email FROM users`;
+    const newUser = await sql`SELECT id, name, email FROM users`;
 
-    return users;
+    return { success: true, newUser: newUser };
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch users.");

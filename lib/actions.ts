@@ -41,40 +41,44 @@ const SignUpSchema = z.object({
 });
 
 export async function signUpUser(formData: FormData) {
-  const parsed = SignUpSchema.safeParse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
+  try {
+    const parsed = SignUpSchema.safeParse({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
 
-  if (!parsed.success) {
-    return {
-      success: false,
-      error: parsed.error.flatten().fieldErrors,
-    };
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.flatten().fieldErrors,
+      };
+    }
+
+    const { name, email, password } = parsed.data;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Simulate user registration logic here
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    const newUser = await createUser(name, email, hashedPassword);
+    console.log(newUser.error);
+    if (newUser.error) {
+      return { success: false, error: newUser.error };
+    }
+
+    await signIn("credentials", {
+      email,
+      password, // guna password asal (bukan hashed)
+      redirect: false, // kita control redirect
+    });
+
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Something went wrong." };
   }
-
-  const { name, email, password } = parsed.data;
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Simulate user registration logic here
-
-  // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-  const newUser = await createUser(name, email, hashedPassword);
-  console.log(newUser.error);
-  if (newUser.error) {
-    return { success: false, error: newUser.error };
-  }
-
-  await signIn("credentials", {
-    email,
-    password,
-    redirect: true,
-  });
-
-  return { success: true };
 }
 
 const FormSchema = z.object({

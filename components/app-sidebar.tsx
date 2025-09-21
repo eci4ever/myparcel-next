@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const data = {
-  user: {
+  mock_user: {
     name: "shadcn",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
@@ -174,7 +174,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser mock_user={data.mock_user} />
       </SidebarFooter>
     </Sidebar>
   );

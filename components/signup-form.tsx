@@ -43,6 +43,7 @@ export function SignUpForm() {
             } else {
                 console.log(result.success)
             }
+            router.push("/dashboard")
         })
 
     }
