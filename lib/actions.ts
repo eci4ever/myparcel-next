@@ -62,8 +62,6 @@ export async function signUpUser(formData: FormData) {
 
   // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-
   const newUser = await createUser(name, email, hashedPassword);
   console.log(newUser.error);
   if (newUser.error) {
