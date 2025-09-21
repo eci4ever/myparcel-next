@@ -39,7 +39,6 @@ export async function createUser(
         success: false,
         error: { email: ["User with this email already exists."] },
       };
-      // throw new Error("User with this email already exists.");
     }
 
     const newUser = await sql`
