@@ -32,6 +32,36 @@ export async function logout() {
   await signOut({ redirectTo: "/" });
 }
 
+const SignUpSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+export async function signUpUser(formData: FormData) {
+  console.log("FormData received in action:", formData);
+
+  const parsed = SignUpSchema.safeParse({
+    name: formData.get("name"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { name, email, password } = parsed.data;
+
+  // Simulate user registration logic here
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  return { success: "Registering", error: null };
+}
+
 const FormSchema = z.object({
   id: z.string(),
   customerId: z.string().min(1, { message: "Please select a customer." }),

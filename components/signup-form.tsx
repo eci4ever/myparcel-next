@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,19 +10,41 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Eye, EyeOff } from "lucide-react"
+import { signUpUser } from "@/lib/actions"
+import { useRouter } from "next/navigation"
+import { start } from "repl"
 
 export function SignUpForm() {
+    const router = useRouter()
     const [showPassword, setShowPassword] = useState(false)
+    const [isPending, startTransition] = useTransition()
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
     })
+    const [errors, setErrors] = useState<{ [key: string]: string[] }>({})
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         // Handle form submission here
-        console.log("Form submitted:", formData)
+
+        const fd = new FormData()
+        fd.append("name", formData.name)
+        fd.append("email", formData.email)
+        fd.append("password", formData.password)
+
+
+        startTransition(async () => {
+            const result = await signUpUser(fd)
+            if (result?.error) {
+                setErrors(result.error)
+                console.log(result.error)
+            } else {
+                console.log(result.success)
+            }
+        })
+
     }
 
     const handleGoogleSignUp = () => {
@@ -95,19 +117,21 @@ export function SignUpForm() {
                                 required
                                 className="bg-input"
                             />
+                            {errors?.name && <span className="text-red-500 text-sm">{errors.name[0]}</span>}
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="email">Email Address</Label>
                             <Input
                                 id="email"
-                                type="email"
+                                type="text"
                                 placeholder="Enter your email"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 required
                                 className="bg-input"
                             />
+                            {errors?.email && <span className="text-red-500 text-sm">{errors.email[0]}</span>}
                         </div>
 
                         <div className="space-y-2">
@@ -137,16 +161,17 @@ export function SignUpForm() {
                                     )}
                                 </Button>
                             </div>
+                            {errors?.password && <span className="text-red-500 text-sm">{errors.password[0]}</span>}
                         </div>
 
-                        <Button type="submit" className="w-full">
-                            Create Account
+                        <Button type="submit" className="w-full" disabled={isPending} aria-disabled={isPending}>
+                            {isPending ? "Creating..." : "Create Account"}
                         </Button>
                     </form>
 
                     <div className="text-center text-sm text-muted-foreground">
                         Already have an account?{" "}
-                        <Link href="/signin" className="text-primary hover:underline">
+                        <Link href="/login" className="text-primary hover:underline">
                             Sign in
                         </Link>
                     </div>
